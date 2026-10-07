@@ -494,7 +494,27 @@ else if(k==='SRH') x=`<path d="M13 75Q60 11 107 75 87 58 60 58T13 75Z" fill="#ff
 return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">${x}</svg>`
 };
 const logoData=(s)=>`data:image/svg+xml;charset=utf-8,${encodeURIComponent(s)}`;
-const teamLogo=(k,w=120)=>k==='ADS'?'<img class="domLogoImg" src="https://resources.adelaide-strikers.pulselive.com/adelaide-strikers/document/2023/04/24/ff060779-07e0-46b7-9cbb-e4a295f264f9/adelaide-strikers.svg" width="'+w+'" height="'+w+'" alt="Adelaide Strikers official logo">':`<img class="domLogoImg" src="${logoData(teamSvg(k))}" width="${w}" height="${w}" alt="${DT[k]||k} logo">`;
+const OFFICIAL_LOGOS={
+BRH:'https://resources.brisbane-heat.pulselive.com/brisbane-heat/photo/2023/05/24/f723bf2e-6b4f-47a5-9126-055719bf5626/Brisbane-Heat-Logo-White.png',
+ADS:'https://resources.adelaide-strikers.pulselive.com/adelaide-strikers/document/2023/04/24/ff060779-07e0-46b7-9cbb-e4a295f264f9/adelaide-strikers.svg',
+HBH:'https://resources.hobart-hurricanes.pulselive.com/hobart-hurricanes/document/2023/04/26/b594f8de-da0f-4a1c-a701-0c3691dbaa09/hobart.svg',
+MLR:'https://resources.melbourne-renegades.pulselive.com/melbourne-renegades/document/2023/04/26/e6a2fc58-fb3c-4da2-a27f-a5e4dea3c8f5/melbourne-renegades.svg',
+MLS:'https://resources.melbourne-stars.pulselive.com/melbourne-stars/document/2023/04/26/ea3c1b91-f219-4842-8c2c-801cd89c4886/mel-stars.svg',
+PRS:'https://resources.perth-scorchers.pulselive.com/perth-scorchers/document/2023/04/26/3b57ae09-06ac-4a33-b4d9-bf6a745fafe8/perth-scorchers.svg',
+SYS:'https://resources.sydney-sixers.pulselive.com/sydney-sixers/document/2023/04/26/ff4d98fc-a5af-4030-97d8-647b6d8fb6d6/sydney-sixers.svg',
+SYT:'https://resources.sydney-thunder.pulselive.com/sydney-thunder/document/2026/05/25/a50989e7-1b95-4659-9e65-8d3e8733e47a/Thunder_Primary_Logo_Keyline.svg',
+CSK:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1622%2Ficon-light.svg',
+DC:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1396%2Ficon-light.svg',
+GT:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F2879%2Ficon-light.svg',
+KKR:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1873%2Ficon-light.svg',
+LSG:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F2880%2Ficon-light.svg',
+MI:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1854%2Ficon-light.svg',
+PBKS:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F2040%2Ficon-light.svg',
+RR:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1558%2Ficon-light.svg',
+RCB:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F2138%2Ficon-light.svg',
+SRH:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1153%2Ficon-light.svg'
+};
+const teamLogo=(k,w=120)=>OFFICIAL_LOGOS[k]?'<img class="domLogoImg" src="'+OFFICIAL_LOGOS[k]+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' official logo">':'<img class="domLogoImg" src="'+logoData(teamSvg(k))+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' logo">';
 const complogo=(l,w=48)=>`<img src="${logoData(LOGO2026[l]||LG.img[l])}" style="height:${w}px;width:auto;margin-right:6px;vertical-align:middle;display:inline-block;background:transparent;border:0;object-fit:contain">`;
 function modeSelect(){setMode(0);$('#app').innerHTML=`<main><section class=l style="max-width:760px;margin:auto"><h2>Choose Career Mode</h2><p>Head coach: <b>${PN||'Coach'}</b></p><div class=grid><div class=tm onclick=newG()><div style="font-size:42px">🌍</div><h2>International</h2><em>Manage a national team across Tests, ODIs and T20Is.</em></div><div class=tm onclick=domesticLeague()><div style="font-size:42px">🏏</div><h2>Domestic</h2><em>Manage a franchise in the IPL or BBL.</em></div></div><button class=btn onclick=nameG()>← Back</button></section></main>`}
 function domesticLeague(){$('#app').innerHTML=`<main><section class=l style="max-width:760px;margin:auto"><h2>Choose Competition</h2><div class=grid>${['IPL','BBL'].map(l=>`<div class=tm onclick="domesticTeams('${l}')">${complogo(l,90)}<h2>${l}</h2><em>${DOM[l].name}</em></div>`).join('')}</div><button class=btn onclick=modeSelect()>← Back</button></section></main>`}
