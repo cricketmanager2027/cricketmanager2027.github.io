@@ -49,7 +49,18 @@ table{border-collapse:collapse;width:100%}th,td{padding:8px 10px;text-align:left
 .teamFlagLSG{background:#c8102e!important;border-radius:3px!important;padding:2px!important}
 .teamFlagHeat{background:transparent!important;padding:0!important}
 .renegadesOutline{color:#d6001c!important;-webkit-text-stroke:2px #fff!important;text-shadow:none!important}
-</style></head><body><svg class="logoFlatDef" aria-hidden="true"><defs><filter id="logoFlat" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceGraphic" stdDeviation=".22" result="soft"/><feComponentTransfer in="soft"><feFuncR type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncG type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncB type="discrete" tableValues=".05 .28 .55 .78 1"/></feComponentTransfer></filter></defs></svg><div id="app"></div>
+<style>
+/* Final logo rules: no invented backgrounds/textures. */
+.domLogoImg.logoRoyalsActive{background:#e5007d!important;border-radius:0!important;padding:10px!important;filter:grayscale(1) brightness(0) invert(1)!important;object-fit:contain!important}
+.domLogoImg.logoRoyalsSelected{background:transparent!important;border-radius:0!important;padding:10px!important;filter:grayscale(1) brightness(0) invert(1)!important;object-fit:contain!important}
+.domLogoImg.logoLSGActive,.domLogoImg.logoLSGSelected{background:transparent!important;border-radius:0!important;padding:0!important;filter:none!important;object-fit:contain!important}
+.teamFlagLSG{background:transparent!important;border-radius:0!important;padding:0!important}
+.teamFlagHeat{background:transparent!important;border-radius:0!important;padding:0!important}
+.teamFlagHeat img{filter:none!important}
+.renegadesWrap,.renegadesOutline{display:none!important}
+.renegadesR{display:block;width:120px;height:120px;margin:0 auto 6px;line-height:112px;text-align:center;font-family:"Arial Black",Impact,sans-serif;font-size:104px;font-style:italic;font-weight:900;color:#d6001c!important;-webkit-text-stroke:5px #fff!important;text-shadow:none!important}
+.logoHeat{background:transparent!important;border-radius:0!important;padding:0!important;filter:none!important}
+</style></style></head><body><svg class="logoFlatDef" aria-hidden="true"><defs><filter id="logoFlat" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceGraphic" stdDeviation=".22" result="soft"/><feComponentTransfer in="soft"><feFuncR type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncG type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncB type="discrete" tableValues=".05 .28 .55 .78 1"/></feComponentTransfer></filter></defs></svg><div id="app"></div>
 <script>
 const T={
 IND:{n:'India',b:78,p:'Y Jaiswal B,KL Rahul B,S Gill B,V Kohli B,R Sharma B,S Iyer B,R Pant W,H Pandya A,R Jadeja A,W Sundar A,J Bumrah F,M Siraj F,A Singh F,K Yadav S,V Chakravarthy S'},
@@ -462,11 +473,11 @@ const DSQ={CSK:'R Gaikwad B,S Samson W,MS Dhoni W,S Dube A,R Chahar S,K Ahmed F,
 Object.keys(DSQ).forEach(c=>{let ip=DOM.IPL.teams.includes(c),k=DCOL[c];T[c]={n:DT[c],b:DOVR[c]-6,p:DSQ[c]};XT[c]='';SN[c]=SN[ip?'IND':'AUS'];FL[c]=`<rect width="30" height="20" fill="${k[0]}"/><rect y="16.5" width="30" height="3.5" fill="${k[1]}" opacity=".4"/><text x="15" y="12.5" font-size="9" text-anchor="middle" fill="${k[1]}" font-family="Arial,sans-serif" font-weight="900">${c}</text>`});
 Object.keys(DSQ).forEach(c=>{FL[c]=`<rect width="30" height="20" fill="${DCOL[c][0]}"/><image href="${LG.img[c]}" x="5" width="20" height="20"/>`});
 const setMode=l=>{DMODE=l?1:0;C.length=0;C.push(...(l?DOM[l].teams:INTL));FM.length=0;FM.push(...(l?['T20']:['Test','ODI','T20']))};
-const LOGO2026={IPL:'https://www.iplt20.com/content-super-hero/ipl-small.svg?v=20261007',BBL:'https://www.ripefruitmedia.com.au/image_permanent_001/1224-610036687.jpg?v=20261007'};
+const LOGO2026={IPL:'https://en.wikipedia.org/wiki/Special:Redirect/file:TATA_IPL_2026_Logo.png',BBL:'https://www.ripefruitmedia.com.au/image_permanent_001/1224-610036687.jpg?v=20261007'};
 const teamSvg=(k)=>{
 const C=DCOL[k]||['#777','#fff'],a=C[0],b=C[1];
 let x='';
-if(k==='BRH') x=`<path d="M27 19Q60 8 93 19V87Q60 109 27 87Z" fill="#fff"/><path d="M43 31h20c18 0 28 10 28 25 0 12-6 20-18 23l15 14H68L55 82H43V31Zm16 13v25h5c8 0 12-4 12-12s-4-13-12-13h-5Z" fill="#00b2a9"/><path d="M57 43v25h8c7 0 11-4 11-12s-4-13-11-13H57Z" fill="#fff"/><path d="M76 29q13 8 15 22-8-5-14-3 6 9 1 20-7-8-16-10 5-11 14-29Z" fill="#00a0df"/>`;
+if(k==='BRH') x=`<path d="M27 19Q60 8 93 19V87Q60 109 27 87Z" fill="#fff"/><path d="M43 31h20c18 0 28 10 28 25 0 12-6 20-18 23l15 14H68L55 82H43V31Zm16 13v25h5c8 0 12-4 12-12s-4-13-12-13h-5Z" fill="#00b2a9"/><path d="M57 43v25h8c7 0 11-4 11-12s-4-13-11-13H57Z" fill="#fff"/><path d="M76 29q13 8 15 22-8-5-14-3 6 9 1 20-7-8-16-10 5-11 14-29Z" fill="#fff"/>`;
 else if(k==='ADS') x=`<text x="60" y="31" text-anchor="middle" fill="#fff" font-family="Arial Black,Arial,sans-serif" font-size="11" font-weight="900" letter-spacing="2">ADELAIDE</text><path d="M19 45Q39 34 60 39 81 44 101 34L94 50Q77 61 60 57 40 53 24 63Z" fill="#fff"/><text x="61" y="76" text-anchor="middle" fill="#fff" font-family="Arial Black,Arial,sans-serif" font-size="30" font-style="italic" font-weight="900" letter-spacing="-1.5">Strikers</text><path d="M18 87Q47 76 72 84 87 89 101 78" fill="none" stroke="#00a0df" stroke-width="5" stroke-linecap="round"/>`;
 else if(k==='HBH') x=`<path d="M60 8C93 24 101 47 87 70 78 84 67 92 60 105 53 92 42 84 33 70 19 47 27 24 60 8Z" fill="#fff"/><path d="M60 18C83 31 88 48 78 64 70 76 64 82 60 91 56 82 50 76 42 64 32 48 37 31 60 18Z" fill="#5e2d91"/><path d="M60 27C71 37 73 48 67 57 63 63 61 68 60 75 59 68 57 63 53 57 47 48 49 37 60 27Z" fill="#fff"/>`;
 else if(k==='MLR') x=`<path d="M25 23 60 9 95 23 89 83Q60 106 31 83Z" fill="#d6001c"/><path d="M35 75V34l25-11 25 11v41" fill="none" stroke="#fff" stroke-width="6"/><path d="M42 70V43h10v12h16V43h10v27H68V63H52v7Z" fill="#fff"/>`;
@@ -507,7 +518,7 @@ RR:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1558%2Ficon
 RCB:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F2138%2Ficon-light.svg',
 SRH:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1153%2Ficon-light.svg'
 };
-const teamLogo=(k,w=120,choose=false)=>{let cls="domLogoImg"+(k==="MLR"?" logoRenegades":k==="RR"?(choose?" logoRoyalsSelected":" logoRoyalsActive"):k==="LSG"?(choose?" logoLSGSelected":" logoLSGActive"):"");let u=OFFICIAL_LOGOS[k]||logoData(teamSvg(k));let img='<img class="'+cls+'" src="'+u+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' official logo">';return k==="MLR"&&!choose?'<span class="renegadesWrap">'+img+'<span class="renegadesOutline">RENEGADES</span></span>':img};
+const teamLogo=(k,w=120,choose=false)=>{if(k==="MLR")return '<span class="renegadesR" aria-label="Melbourne Renegades">R</span>';let cls="domLogoImg"+(k==="RR"?(choose?" logoRoyalsSelected":" logoRoyalsActive"):k==="LSG"?(choose?" logoLSGSelected":" logoLSGActive"):k==="BRH"?" logoHeat":"");let u=OFFICIAL_LOGOS[k]||logoData(teamSvg(k));return '<img class="'+cls+'" src="'+u+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' official logo">'};
 const complogo=(l,w=48)=>{let src=LOGO2026[l]||LG.img[l];return `<img src="${src}" style="height:${w}px;width:auto;max-width:150px;margin-right:6px;vertical-align:middle;display:inline-block;background:transparent;border:0;object-fit:contain" alt="${l} competition logo">`};
 function modeSelect(){setMode(0);$('#app').innerHTML=`<main><section class=l style="max-width:760px;margin:auto"><h2>Choose Career Mode</h2><p>Head coach: <b>${PN||'Coach'}</b></p><div class=grid><div class=tm onclick=newG()><div style="font-size:42px">🌍</div><h2>International</h2><em>Manage a national team across Tests, ODIs and T20Is.</em></div><div class=tm onclick=domesticLeague()><div style="font-size:42px">🏏</div><h2>Domestic</h2><em>Manage a franchise in the IPL or BBL.</em></div></div><button class=btn onclick=nameG()>← Back</button></section></main>`}
 function domesticLeague(){$('#app').innerHTML=`<main><section class=l style="max-width:760px;margin:auto"><h2>Choose Competition</h2><div class=grid>${['IPL','BBL'].map(l=>`<div class=tm onclick="domesticTeams('${l}')">${complogo(l,90)}<h2>${l}</h2><em>${DOM[l].name}</em></div>`).join('')}</div><button class=btn onclick=modeSelect()>← Back</button></section></main>`}
