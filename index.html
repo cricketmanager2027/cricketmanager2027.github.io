@@ -313,7 +313,7 @@ function ball(c,bl,fd,mt){let s=c.bt[c.s],bo=c.bw[bl.n]||(c.bw[bl.n]={o:0,r:0,w:
  s.r+=r;c.r+=r;bo.r+=r;c.partnership=(c.partnership||0)+r;s.six=(s.six||0)+(r==6);s.four=(s.four||0)+(r==4);if(c.partnership>=100)c.momentum=1;if(c.fieldBoost>0)c.fieldBoost--;if(r%2)[c.s,c.ns]=[c.ns,c.s];return r?''+r:'·'}
 function over(bl,fd,mt,limit=6){let c=M.I[M.inn],o=[],L=M.F.lim,used=0;
  for(let i=0;i<limit;i++){o.push(ball(c,bl,fd,mt));used++;if(c.w>=10||won(c)||c.pendingWicket)break}
- if(!c.pendingWicket&&used==6){c.bw[bl.n].o++;M.overs++;[c.s,c.ns]=[c.ns,c.s]}
+ if(!c.pendingWicket&&c.b%6===0){c.bw[bl.n].o++;M.overs++;[c.s,c.ns]=[c.ns,c.s]}
  c.lastB=bl.n;
  M.log.push(`Ov ${Math.ceil(c.b/6)}: ${bl.n} ${o.map(x=>x=='W'?'<span class=w>W</span>':x=='4'||x=='6'?'<span class=f>'+x+'</span>':x).join(' ')} — ${c.r}/${c.w}`);
  if(c.w>=10||won(c)||(L&&c.b>=L*6))close();else if(M.F.cap&&M.overs>=M.F.cap)finish('D');
