@@ -135,7 +135,7 @@ gen:[['Spot on.','Well said 👍'],['Absolutely not.','Hard disagree 🙄'],['Me
 function sh(a){return a.map(v=>[R(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
 function cms(k,x){x=x||{};let P=ST[k]||ST.gen,u=sh(UN),st=sh([0,1,2,3,4]).slice(0,4),fan=FAN[x.c]||['Come on! 🔥'];let count=2+~~(R()*4);return st.slice(0,count).map((s,i)=>({u:u[i],t:(s==4?(/win|sw|tw|tbl|form/.test(k)?sh(fan)[0]:'Still backing {t}, always 💪'):sh(P[s])[0]).replace(/\\{n\\}/g,x.n||'him').replace(/\\{t\\}/g,x.t||'they'),l:~~(R()*900)}))}
 function kd(h){return /retire/.test(h)?'ret':/hits|takes|form|run charts/.test(h)?'form':/top the|Championship table/.test(h)?'tbl':/^Preview/.test(h)?'pre':/Selection|squad|open for/.test(h)?'sel':'gen'}
-function story(c,h,b,src,k,x){let m=h.match(/^(.+?) (hits|takes|in sparkling|leads|retires)/)||h.match(/over (.+?)'s/);return {c,h,b,d:G.d,src:src||SRC[~~(R()*SRC.length)],lk:~~(R()*4000),cm:cms(k||kd(h),{n:m?m[1]:'',t:T[c].n,c})}}
+function story(c,h,b,src,k,x){let m=h.match(/^(.+?) (hits|takes|in sparkling|leads|retires)/);if(!m)m=h.match(/over (.+?)'s/);return {c:c,h:h,b:b,d:G.d,src:src||SRC[~~(R()*SRC.length)],lk:~~(R()*4000),cm:cms(k||kd(h),{n:m?m[1]:'',t:T[c].n,c:c})}}
 function fill(){
  if(G.fi===0){
   G._preNewsN=(G._preNewsN||0)+1;
