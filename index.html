@@ -451,7 +451,25 @@ const DSQ={CSK:'R Gaikwad B,S Samson W,MS Dhoni W,S Dube A,R Chahar S,K Ahmed F,
 Object.keys(DSQ).forEach(c=>{let ip=DOM.IPL.teams.includes(c),k=DCOL[c];T[c]={n:DT[c],b:DOVR[c]-6,p:DSQ[c]};XT[c]='';SN[c]=SN[ip?'IND':'AUS'];FL[c]=`<rect width="30" height="20" fill="${k[0]}"/><rect y="16.5" width="30" height="3.5" fill="${k[1]}" opacity=".4"/><text x="15" y="12.5" font-size="9" text-anchor="middle" fill="${k[1]}" font-family="Arial,sans-serif" font-weight="900">${c}</text>`});
 Object.keys(DSQ).forEach(c=>{FL[c]=`<rect width="30" height="20" fill="${DCOL[c][0]}"/><image href="${LG.img[c]}" x="5" width="20" height="20"/>`});
 const setMode=l=>{DMODE=l?1:0;C.length=0;C.push(...(l?DOM[l].teams:INTL));FM.length=0;FM.push(...(l?['T20']:['Test','ODI','T20']))};
-const LOGO2026={IPL:'https://www.iplt20.com/content-super-hero/ipl-small.svg',BBL:'https://www.ripefruitmedia.com.au/image_permanent_001/1224-610036687.jpg'}
+const LOGO2026={
+IPL:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360">
+<defs><linearGradient id="iplg" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#0067b1"/><stop offset=".48" stop-color="#2d8bc3"/><stop offset=".72" stop-color="#ef3d68"/><stop offset="1" stop-color="#f5a623"/></linearGradient></defs>
+<path d="M65 255c73-104 178-151 318-130 66 10 118 38 151 79-70-36-139-44-207-25-91 25-166 70-262 76z" fill="url(#iplg)"/>
+<path d="M190 274c-20-35-14-68 17-94 20-17 43-25 66-25l-20-64 38-14 27 79c30 7 52 27 62 55 13 37 5 69-23 88-29 20-65 22-98 4-29-16-51-25-69-29z" fill="#fff"/>
+<path d="M230 154l48-13 19 14-51 18zM282 208l83-70 11 13-77 79z" fill="#fff"/>
+<circle cx="332" cy="65" r="9" fill="#fff"/>
+<text x="462" y="105" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="48" font-weight="900" letter-spacing="1">TATA</text>
+<text x="462" y="202" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="94" font-weight="900" letter-spacing="-4">IPL</text>
+</svg>`,
+BBL:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360">
+<defs><linearGradient id="bblg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dfff00"/><stop offset=".55" stop-color="#b8ed00"/><stop offset="1" stop-color="#72bd00"/></linearGradient></defs>
+<path d="M62 278c39-96 94-160 173-194 70-30 154-33 264-2-79 7-145 28-199 64-76 51-139 96-238 132z" fill="none" stroke="url(#bblg)" stroke-width="25" stroke-linecap="round"/>
+<path d="M99 280c64-7 120-29 170-65 54-38 91-84 112-139" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+<text x="303" y="232" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="116" font-weight="900" font-style="italic" letter-spacing="-7">BBL</text>
+<path d="M178 78h244" stroke="#dfff00" stroke-width="7" stroke-linecap="round"/>
+<text x="300" y="70" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="32" font-weight="800" letter-spacing="5">BIG BASH</text>
+</svg>`
+};
 const teamSvg=(k)=>{
 const C=DCOL[k]||['#777','#fff'],a=C[0],b=C[1];
 let x='';
@@ -496,7 +514,9 @@ RR:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1558%2Ficon
 RCB:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F2138%2Ficon-light.svg',
 SRH:'https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F1153%2Ficon-light.svg'
 };
-const teamLogo=(k,w=120,choose=false)=>{let cls="domLogoImg"+(k==="MLR"?" logoRenegades":k==="RR"&&!choose?" logoRoyals":k==="LSG"?" logoLSG":"");if(!OFFICIAL_LOGOS[k])return '<img class="'+cls+'" src="'+logoData(teamSvg(k))+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' logo">';let img='<img class="'+cls+'" src="'+OFFICIAL_LOGOS[k]+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' official logo">';return k==="MLR"&&!choose?'<span class="renegadesWrap">'+img+'<span class="renegadesOutline">RENEGADES</span></span>':img}const complogo=(l,w=48)=>{let src=LOGO2026[l]||LG.img[l];return '<img src="'+src+'" style="height:'+w+'px;width:auto;max-width:150px;margin-right:6px;vertical-align:middle;display:inline-block;background:transparent;border:0;object-fit:contain" alt="'+l+' competition logo">'}function modeSelect(){setMode(0);$('#app').innerHTML=`<main><section class=l style="max-width:760px;margin:auto"><h2>Choose Career Mode</h2><p>Head coach: <b>${PN||'Coach'}</b></p><div class=grid><div class=tm onclick=newG()><div style="font-size:42px">🌍</div><h2>International</h2><em>Manage a national team across Tests, ODIs and T20Is.</em></div><div class=tm onclick=domesticLeague()><div style="font-size:42px">🏏</div><h2>Domestic</h2><em>Manage a franchise in the IPL or BBL.</em></div></div><button class=btn onclick=nameG()>← Back</button></section></main>`}
+const teamLogo=(k,w=120,choose=false)=>{let cls="domLogoImg"+(k==="MLR"?" logoRenegades":k==="RR"&&!choose?" logoRoyals":k==="LSG"?" logoLSG":"");if(!OFFICIAL_LOGOS[k])return '<img class="'+cls+'" src="'+logoData(teamSvg(k))+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' logo">';let img='<img class="'+cls+'" src="'+OFFICIAL_LOGOS[k]+'" width="'+w+'" height="'+w+'" alt="'+(DT[k]||k)+' official logo">';return k==="MLR"&&!choose?'<span class="renegadesWrap">'+img+'<span class="renegadesOutline">RENEGADES</span></span>':img};
+const complogo=(l,w=48)=>`<img src="${logoData(LOGO2026[l]||LG.img[l])}" style="height:${w}px;width:auto;margin-right:6px;vertical-align:middle;display:inline-block;background:transparent;border:0;object-fit:contain">`;
+function modeSelect(){setMode(0);$('#app').innerHTML=`<main><section class=l style="max-width:760px;margin:auto"><h2>Choose Career Mode</h2><p>Head coach: <b>${PN||'Coach'}</b></p><div class=grid><div class=tm onclick=newG()><div style="font-size:42px">🌍</div><h2>International</h2><em>Manage a national team across Tests, ODIs and T20Is.</em></div><div class=tm onclick=domesticLeague()><div style="font-size:42px">🏏</div><h2>Domestic</h2><em>Manage a franchise in the IPL or BBL.</em></div></div><button class=btn onclick=nameG()>← Back</button></section></main>`}
 function domesticLeague(){$('#app').innerHTML=`<main><section class=l style="max-width:760px;margin:auto"><h2>Choose Competition</h2><div class=grid>${['IPL','BBL'].map(l=>`<div class=tm onclick="domesticTeams('${l}')">${complogo(l,90)}<h2>${l}</h2><em>${DOM[l].name}</em></div>`).join('')}</div><button class=btn onclick=modeSelect()>← Back</button></section></main>`}
 function domesticTeams(l){setMode(l);let d=DOM[l];$('#app').innerHTML=`<main><section class=l style="max-width:900px;margin:auto"><h2>${complogo(l,34)}Choose Your ${d.short} Team</h2><div class=grid>${d.teams.map(t=>`<div class="tm tc" style="background:${DCOL[t][0]};color:${DCOL[t][1]};border-color:${DCOL[t][1]}55" onclick="pick('${t}','${l}')">${teamLogo(t,120,true)}<h3>${DT[t]}</h3><b>OVR ${trt(SQ0[t]||(SQ0[t]=mk(t)),'T20')}</b></div>`).join('')}</div><button class=btn onclick=domesticLeague()>← Back</button></section></main>`}
 function domSeason(){let sh=a=>a.slice().sort(()=>R()-.5),o=C.filter(k=>k!=G.me);G.yr=''+(2026+G.season);G.tb={};FM.forEach(f=>{G.tb[f]={};C.forEach(k=>G.tb[f][k]={p:0,w:0,d:0,l:0,pt:0})});G.fi=0;G.sr={};G.ss=G.d;G.fd=1;G.sid=0;G.tn=null;G.ko=[];G.po=null;G.cal=[];
