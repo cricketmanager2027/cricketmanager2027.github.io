@@ -137,89 +137,14 @@ function cms(k,x){x=x||{};let P=ST[k]||ST.gen,u=sh(UN),st=sh([0,1,2,3,4]).slice(
 function kd(h){return /retire/.test(h)?'ret':/hits|takes|form|run charts/.test(h)?'form':/top the|Championship table/.test(h)?'tbl':/^Preview/.test(h)?'pre':/Selection|squad|open for/.test(h)?'sel':'gen'}
 function story(c,h,b,src,k,x){return {c:c,h:h,b:b,d:G.d,src:src||'',lk:0,cm:[]}}
 function fill(){
+ if(!G.news)G.news=[];
  if(G.fi===0){
-  G._preNewsN=(G._preNewsN||0)+1;
-  let idx=G._preNewsN, own=(G.sq[G.me]||[]).filter(p=>!(p.rf||[]).length), ownXI=G.xi.Test||pickXI(G.sq[G.me],'Test',G.me);
-  let team=G.me, tp=own[~~(R()*Math.max(1,own.length))]||ownXI[0], fmt=FM[~~(R()*FM.length)];
-  let retired=G.dom?(G.retiredPlayers||[]).map(r=>r.n).filter(n=>!C.some(k=>(G.sq[k]||[]).some(p=>p.n==n))):['U Khawaja','B Stokes','V Kohli','R Sharma','R Jadeja'].filter(n=>RFM[n]&&RFM[n].length>=3&&!(G.sq[G.me]||[]).some(p=>p.n==n&&!(p.rf||[]).length));
-  let other=C.filter(c=>c!=G.me), oc=other[~~(R()*Math.max(1,other.length))]||C.find(c=>c!=G.me), of=fmt, oXI=oc?pickXI(G.sq[oc],of,oc):[], op=oXI[~~(R()*Math.max(1,oXI.length))];
-  let activePool=own.filter(p=>!((G.xi[fmt]||[]).includes(p))), drop=activePool[~~(R()*Math.max(1,activePool.length))]||tp;
-  if(idx%7==1){
-   let posts=[`Looking forward to the new season. The preparation has been strong and I am ready to get started. 💪`,`Big season ahead. The work has been good and I am ready to get going. 🏏`,`The preparation is done. Now it is about turning the work into performances.`];
-   G.news.unshift({post:1,c:team,h:posts[~~(R()*posts.length)],src:tp.n,u:'@'+tp.n.toLowerCase().replace(/[^a-z0-9]+/g,''),lk:~~(R()*3000),d:G.d,cm:cms('post',{n:tp.n,t:T[team].n,c:team})});
-  }else if(idx%7==2){
-   let posts=[`Good to be back with the group. We have put in plenty of work and the first game cannot come soon enough.`,`Pre-season has been about getting the basics right. Looking forward to putting it together when the season starts.`,`The work is done for now. Time to keep building towards the opener. 🏏`];
-   G.news.unshift({post:1,c:team,h:posts[~~(R()*posts.length)],src:tp.n,u:'@'+tp.n.toLowerCase().replace(/[^a-z0-9]+/g,''),lk:~~(R()*2600),d:G.d,cm:cms('post',{n:tp.n,t:T[team].n,c:team})});
-  }else if(idx%7==3&&op){
-   let posts=[`Looking forward to the new season. We have got a strong group and I am ready for the first game.`,`The preparation has been good. Now we want to start the season well.`,`Big year ahead for ${T[oc].n}. Looking forward to getting out there.`];
-   G.news.unshift({post:1,c:oc,h:posts[~~(R()*posts.length)],src:op.n,u:'@'+op.n.toLowerCase().replace(/[^a-z0-9]+/g,''),lk:~~(R()*2400),d:G.d,cm:cms('post',{n:op.n,t:T[oc].n,c:oc})});
-  }else if(idx%7==4&&retired.length){
-   let old=retired[~~(R()*retired.length)],msgs=old=='U Khawaja'?[`Sometimes I wish I could play again. Cricket is a great game and I still love watching it.`,`I miss the feeling of getting out there, but retirement has been good to me. Still watching every ball.`,`No longer in the XI, but I will always have a soft spot for the game. Enjoying seeing the next generation come through.`]:[`Retirement gives you a different view of the game. Still love watching the boys and following the season.`,`I may not be playing anymore, but cricket is still a huge part of my life. Looking forward to the season.`,`Good luck to everyone starting a new campaign. Enjoy it — the game moves on quickly.`];
-   G.news.unshift({post:1,c:team,h:msgs[~~(R()*msgs.length)],src:old,u:'@'+old.toLowerCase().replace(/[^a-z0-9]+/g,''),lk:~~(R()*2200),d:G.d,cm:cms('post',{n:old,t:T[team].n,c:team})});
-  }else if(idx%7==5){
-   let hs=[`${drop.n} facing a fight to keep his place for the opening match`,`Selection question: could ${drop.n} miss out when the season begins?`,`Selectors face a decision over ${drop.n} ahead of the opener`];
-   let bs=[`With competition for places increasing, there is no guarantee ${drop.n} will start the campaign in the XI. The player will need to make a strong case during the final preparation period.`,`The squad has several options in ${drop.n}'s role, leaving the selectors with a difficult call before the opening fixture.`,`${drop.n} remains in the wider squad, but a place in the starting XI is far from certain.`];
-   let n=story(team,hs[~~(R()*hs.length)],bs[~~(R()*bs.length)],SRC[~~(R()*SRC.length)],'sel',{n:drop.n,t:T[team].n,c:team});
-   n.cm=[{u:tp.n,t:'“Everyone knows they will have to earn their spot. Competition is healthy.”',l:~~(R()*900)},{u:UN[~~(R()*UN.length)],t:'“Honestly, I would not be surprised if the selectors made a change.”',l:~~(R()*700)}];G.news.unshift(n);
-  }else{
-   let msgs=[`Season cannot come soon enough. Big year ahead! 🏏`,`Anyone else counting down to the first game?`,`I have got a feeling this season is going to be a good one.`,`Just give us some cricket already 😂`,`Early prediction: the first big selection debate will start before the first ball.`],u=UN[~~(R()*UN.length)];
-   G.news.unshift({post:1,c:team,h:msgs[~~(R()*msgs.length)],src:u,u:'@'+u,lk:~~(R()*1800),d:G.d,cm:cms('post',{t:T[team].n,c:team})});
-  }
-  if(G.news.length>10)G.news.length=10;
-  return;
+  let team=G.me,pl=(G.sq[team]||[]).filter(p=>!(p.rf||[])),p=pl[~~(R()*Math.max(1,pl.length))];
+  let posts=[`The new season is almost here. ${T[team].n} are putting the final pieces together.`,`${T[team].n} are building towards the opener with plenty of competition for places.`,`There is plenty of optimism around ${T[team].n} as the new campaign approaches.`];
+  G.news.unshift({c:team,h:posts[~~(R()*posts.length)],b:'Preparation is continuing as the squad gets ready for the season.',d:G.d,src:p?p.n:T[team].n,lk:~~(R()*2500),cm:[]});
  }
-
-let c=R()<.5?G.me:C[~~(R()*C.length)],pl=G.sq[c],p=pl[~~(R()*15)].n,q=pl[~~(R()*15)].n,bt=pl.filter(x=>x.t=='B'||x.t=='W'||x.t=='A'),pb=bt[~~(R()*bt.length)].n,qb=bt[~~(R()*bt.length)].n,n=T[c].n,oc=C.filter(k=>k!=c),o=T[oc[~~(R()*oc.length)]||c].n,x=R();
- if(x<.22&&G.tb.Test&&C.some(k=>G.tb.Test[k].p>0)){let t=rk('Test'),a=t[0],b=t[t.length-1],A=G.tb.Test[a];G.news.unshift(story(a,`${T[a].n} top the World Test Championship table`,`After ${A.p} Tests, ${T[a].n} sit first on ${pc('Test',a).toFixed(1)}% of points, while ${T[b].n} are bottom of the standings.`))}
- else if(x<.36){let f=G.fx[Math.min(G.fi,G.fx.length-1)];G.news.unshift(story(f.o,`Preview: ${T[G.me].n} v ${T[f.o].n}, ${f.ev}`,`${G.dom?`The ${G.lg} clash`:`The ${f.f} series`} gets under way with ${T[G.me].n} rated ${trt(G.sq[G.me],G.dom?'T20':'Test')} and ${T[f.o].n} rated ${trt(G.sq[f.o],G.dom?'T20':'Test')}${G.dom?'':' on the Test scale'}.`))}
- else if(x<.46&&Object.keys(G.ps).length){let e=Object.entries(G.ps).sort((a,b)=>b[1].r-a[1].r)[0];G.news.unshift(story(e[1].t,`${e[0]} leads the run charts this season`,`${e[0]} has ${e[1].r} runs so far ${G.dom?'this season':'across all formats'} and is setting the pace.`))}
- else if(x<.57){let sp=pl[~~(R()*pl.length)],social=[`Great session today. Ready for the season to get underway. 💪`,`Good to be back around the group. Lots to look forward to this year.`,`The hard work starts now. We have a big season ahead.`,`Really enjoying the preparation. Time to turn the work into performances.`,`One day at a time. Excited for what is ahead. 🏏`][~~(R()*5)];G.news.unshift({post:1,c,h:social,src:sp.n,u:'@'+sp.n.toLowerCase().replace(/[^a-z0-9]+/g,''),lk:~~(R()*3000),d:G.d,cm:cms('post',{n:sp.n,t:n,c})})}
- else if(x<.7){G.news.unshift({post:1,c,h:[`${pb} should be opening the batting for ${n}. Change my mind.`,`Drop ${q} already. Three failures in a row.`,`${p} is the best player in the world right now and it isn't close.`,`${n} need an extra spinner this ${G.dom?'season':'series'}.`,`Can't believe ${q} keeps getting picked.`,`${G.dom?`Hot take: ${n} are one finisher short of a title.`:`Hot take: T20 has ruined ${n}'s Test batting.`}`,`${pb} at 3 and ${qb} at 5. You're welcome, selectors.`,`Make ${p} captain of ${n} full-time.`,`${G.dom?`${G.dl} beats every other T20 league. Don't @ me.`:`Test cricket beats everything else. Don't @ me.`}`,`This ${n} attack has no bite. Bring back the old crew.`][~~(R()*10)],src:NM[~~(R()*8)],u:'',lk:~~(R()*3000),cm:cms('post')});let z=G.news[0];z.d=G.d;z.u='@'+z.src.replace(' ','')}
- else{let LA=[[`Selection debate: should ${q} keep his place for ${n}?`,`Pundits are split ahead of the next squad announcement.`],[`${n} fans flock back as ticket sales surge`,`Grounds report packed houses as Test, ODI and T20 cricket return.`],[`Opinion: ${n} must back youth over experience`,`Our columnist argues a fresh batting order could unlock the side.`],[`Mailbag: who should open for ${n}?`,`Readers wrote in with strong views, from ${pb} to ${qb}.`],[`${n} and ${o} set for a heated rivalry`,`Both camps are talking up the contest, and big crowds are expected.`],[`Analysis: why spin could decide the season`,`Dry surfaces and wear on day four are making slow bowlers matter again.`],[`Has T20 changed Test batting forever?`,`Former players are split on whether aggression helps five-day cricket.`],[`Stats: ${n} bowlers tiring late in innings`,`Workload data suggests rotating the attack could keep wickets coming.`],[`${n} name squad for the next series`,`The selectors have named a balanced group, with ${pb} and ${qb} among the batters.`,'Cricket Australia'],[`Pitch preview: what to expect in the next Test`,`Curators expect an even contest between bat and ball early on.`,'Sky Sports Cricket'],[`ICC rankings: ${n} on the move`,`The latest update shows movement across all three formats.`,'ICC'],[`${n} fitness camp wraps up`,`Players spent the week on conditioning ahead of a busy schedule.`,'ECB'],[`The next generation of ${n} stars`,`Academy coaches point to a strong crop of teenagers coming through.`,'Cricbuzz'],[`Records within reach for ${n}`,`Several milestones could fall over the coming series.`,'ESPNcricinfo']].concat(XN(c,n,o,pb,qb));if(G.dom)LA=LA.slice(14);let L=LA[~~(R()*LA.length)];G.news.unshift(story(c,L[0],L[1],L[2]))}
- if(R()<.78){
-  let rc=G.me,fx=G.fx[G.fi]||G.fx.find(z=>z.d>=G.d),pl=(G.sq[rc]||[]).filter(p=>!(p.rf||[]).length);
-  if(fx&&pl.length){
-   let opp=fx.o, opposition=(G.sq[opp]||[]).filter(z=>!(z.rf||[]).length);
-   let headlinePlayer=pl[~~(R()*pl.length)], bats=pl.filter(z=>z.t=='B'||z.t=='W'||z.t=='A'), bowl=pl.filter(z=>z.t=='S'||z.t=='A'||z.t=='F');
-   if(!bats.length)bats=pl;if(!bowl.length)bowl=pl;
-   let p=bats[~~(R()*bats.length)]||headlinePlayer, bowler=bowl[~~(R()*bowl.length)]||headlinePlayer;
-   let mode=~~(R()*13), headline='',body='',kind='gen';
-   if(mode==0){let runs=100+~~(R()*86);headline=`${p.n} hits a ${runs}-run century for ${T[rc].n}`;body=`${p.n} produced a major innings in the ${fx.f}, giving ${T[rc].n} a huge boost ahead of the next match.`;kind='performance'}
-   else if(mode==1){let wk=5+~~(R()*3);headline=`${bowler.n} takes ${wk} wickets in a dominant spell`;body=`${bowler.n} ripped through the opposition and turned the match in ${T[rc].n}'s favour.`;p=bowler;kind='performance'}
-   else if(mode==2){headline=`${headlinePlayer.n} named in ${T[rc].n}'s squad for the ${G.dom?'next '+G.dl+' match':fx.f+' tour'}`;body=`The selectors have included ${headlinePlayer.n} in the group travelling for the assignment against ${T[opp].n}.`;p=headlinePlayer;kind='selection'}
-   else if(mode==3){headline=`${headlinePlayer.n} returns to the ${T[rc].n} squad`;body=`After time away from the side, ${headlinePlayer.n} is available again and will be pushing for a place in the XI.`;p=headlinePlayer;kind='return'}
-   else if(mode==4){headline=`${headlinePlayer.n} ruled out of the next ${fx.f} match`;body=`${headlinePlayer.n} will miss the next fixture after reporting an injury concern. The team will assess the recovery timeline.`;p=headlinePlayer;kind='injury'}
-   else if(mode==5){let runs=30+~~(R()*71);headline=`${p.n} hits ${runs} and helps set up ${T[rc].n}`;body=`A valuable contribution from ${p.n} has given the side momentum heading into the next stage of the ${fx.f}.`;kind='performance'}
-   else if(mode==6){headline=`${p.n} reaches a career milestone for ${T[rc].n}`;body=`The milestone was celebrated by teammates after another important contribution from ${p.n}.`;kind='milestone'}
-   else if(mode==7){headline=`${headlinePlayer.n} backed to make an impact against ${T[opp].n}`;body=`The ${T[rc].n} camp believes ${headlinePlayer.n} can play an important role in the upcoming ${fx.f} contest.`;p=headlinePlayer;kind='selection'}
-   else if(mode==8){headline=`${p.n} praised by teammates after another strong performance`;body=`${p.n} is building momentum and has drawn plenty of praise inside the ${T[rc].n} camp.`;kind='performance'}
-   else if(mode==9){headline=`${headlinePlayer.n} confirms availability for the upcoming ${fx.f}`;body=`${headlinePlayer.n} says the body is feeling good and the focus is now on preparing for the next assignment.`;p=headlinePlayer;kind='return'}
-   else if(mode==10){headline=`${headlinePlayer.n} responds to selection talk`;body=`With a place in the XI under discussion, ${headlinePlayer.n} says the focus is on performing rather than outside noise.`;p=headlinePlayer;kind='selection'}
-   else if(mode==11){let kps=pl.filter(z=>z.t=='W'),kp=kps[~~(R()*Math.max(1,kps.length))]||headlinePlayer,wk=1+~~(R()*4);headline=`${kp.n} makes ${wk} sharp keeping dismissals`;body=`${kp.n} has impressed behind the stumps, contributing crucial catches and stumpings for ${T[rc].n}.`;p=kp;kind='milestone'}
-   else {headline=`${T[rc].n} camp encouraged by ${p.n}'s form`;body=`${p.n} has impressed in recent cricket and is pushing hard for another opportunity.`;kind='performance'}
-
-   let active=pl.filter(z=>z!==p), rival=opposition.filter(z=>z!==p), y;
-   if(kind=='performance' || kind=='milestone') y=active[~~(R()*Math.max(1,active.length))]||p;
-   else if(kind=='injury' || kind=='return') y=active[~~(R()*Math.max(1,active.length))]||p;
-   else y=(R()<.7?active:rival)[~~(R()*Math.max(1,(R()<.7?active:rival).length))]||active[0]||p;
-
-   const replies={
-    performance:[`Good job, ${p.n}. Quality innings.`,`What a performance. ${p.n} was outstanding today.`,`Huge effort from ${p.n}. That is exactly what we needed.`,`Brilliant from ${p.n}. Hopefully there is plenty more to come.`,`He made a real difference today. Great stuff.`,`That is why ${p.n} is so valuable to this team.`],
-    milestone:[`Well deserved. ${p.n} has put in a lot of work.`,`A special achievement. Really happy for ${p.n}.`,`Another milestone for a seriously good player.`,`He should be proud of that. Great teammate.`,`It has been great watching ${p.n} reach that mark.`],
-    selection:[`He deserves the opportunity. Hopefully he gets his chance.`,`Good selection. ${p.n} has been working hard for this.`,`I am looking forward to seeing what ${p.n} can do.`,`The squad is stronger with ${p.n} available.`,`He has earned it. Now it is about making the most of the chance.`,`If he gets the nod, I know he will be ready.`],
-    return:[`Great to have ${p.n} back. We have missed him.`,`It is a big boost having ${p.n} around again.`,`He looks ready. Hopefully he gets through the week well.`,`The group is excited to have ${p.n} back.`,`He gives us another option and plenty of experience.`],
-    injury:[`Hopefully ${p.n} is back soon. We do not want to rush him.`,`That is disappointing, but his health comes first.`,`We will miss him, but we have to make sure he is right.`,`Fingers crossed it is nothing serious.`,`The main thing is getting ${p.n} right again.`]
-   };
-   let comments=[];
-   if(y&&y!==p) comments.push({u:y.n,t:'“'+(replies[kind]||replies.performance)[~~(R()*(replies[kind]||replies.performance).length)]+'”',l:~~(R()*900)});
-   if(G.retiredPlayers&&G.retiredPlayers.length&&R()<.28){let old=G.retiredPlayers[~~(R()*G.retiredPlayers.length)];comments.push({u:old.n,t:'“'+([`Great to see the boys still producing moments like that.`,`Still keeping an eye on the game. Some things never change.`,`Enjoying retirement, but I still love watching these moments.`][~~(R()*3)])+'”',l:~~(R()*650)})}
-   let pool=active.filter(q=>q!==y&&q!==p);if(!pool.length)pool=rival.filter(q=>q!==p&&q!==y);if(pool.length&&R()<.72){let z=pool[~~(R()*pool.length)];comments.push({u:z.n,t:'“'+([`Good stuff. Keep it going.`,`Big contribution. Well played.`,`That is a player in form.`,`The team will be better for that.`][~~(R()*4)])+'”',l:~~(R()*500)})}
-   while(comments.length<2){let u=UN[~~(R()*UN.length)];comments.push({u,t:sh(CM)[0],l:~~(R()*700)})}
-   if(comments.length>5)comments=comments.slice(0,5);
-   let n=story(rc,headline,body,SRC[~~(R()*SRC.length)]);n.cm=comments;G.news.unshift(n);
-  }
- }
-if(G.news.length>10)G.news.length=10}
+ if(G.news.length>10)G.news.length=10;
+}
 function pick(c,l){setMode(l);window.FP=null;G={dom:l?1:0,dl:l||0,lg:l?DOM[l].name:'',me:c,mn:PN||'Coach',cp:0,season:1,d:new Date(2026,10,19).getTime(),tab:'Central',sf:FM[0],conf:60,funds:10,news:[],nw:0,sq:{},xi:{},ps:{},fm:{},tro:[],log:[],id:Date.now(),u:{b:0,w:0,f:0,n:0,a:0,m:0,s:0,sc:0},fan:50,ss:{},sp:null,retiredPlayers:[],lstats:{Test:{},ODI:{},T20:{}},statf:l?'T20':'Test',rec:{Test:[0,0,0],ODI:[0,0,0],T20:[0,0,0]}};
  C.forEach(k=>G.sq[k]=mk(k));FM.forEach(f=>G.xi[f]=pickXI(G.sq[c],f,c));G.cap=Object.assign({},REAL_CAPS[c]||{});newSeason();{let d0=G.d,bk=[],b=0;for(let k=0;k<10;k++){bk.push(b);b+=R()<.4?0:1+~~(R()*2)}for(let k=9;k>=1;k--){G.d=d0-864e5*bk[k];fill()}G.d=d0}
  G.news.unshift(story(c,`${T[c].n} appoint you as head coach`,`The board expects ${G.dom?'a place in the playoffs':'a top-two finish in every format'}. Fans are cautiously optimistic.`,'The Athletic'));newSeason();render();if(G.dom)setTimeout(()=>rulesPop(),400)}
