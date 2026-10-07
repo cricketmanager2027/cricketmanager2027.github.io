@@ -170,7 +170,7 @@ const trophy=(n,w=64)=>{let k=tk(n),g=/T20/.test(n)?'#cfd8dc':'#e8b923',d=/T20/.
 const cab=()=>{let t=G.tro,per=8,pg=Math.max(1,Math.ceil(t.length/per)),p=Math.min(G.cp||0,pg-1),v=t.slice(p*per,p*per+per);G.cp=p;
  return `<div class=cab>${[0,1].map(r=>`<div class=shelf>${v.length?v.slice(r*4,r*4+4).map(n=>`<div class=tro>${trophy(n,70)}<small>${n}</small></div>`).join(''):r?'':'<em style="align-self:center">Collecting dust in the trophy cabinet, let\'s win something!</em>'}</div>`).join('')}</div>${pg>1?`<div style="text-align:center;margin-top:8px"><em>Page</em> ${[...Array(pg)].map((_,i)=>`<button class="btn ${i==p?'act':''}" onclick="G.cp=${i};render()">${i+1}</button>`).join('')}</div>`:''}`};
 const sl=()=>{let f=G.fx[G.fi];if(f.ko)return f.ko;if(f.lg){let t=G.tb.T20[G.me];return G.lg+' · '+t.w+'W '+t.l+'L'}let s=G.sr[f.sid];if(!s)return 'Series level 0-0';return s.m>s.o?`${T[G.me].n} lead ${s.m}-${s.o}`:s.o>s.m?`${T[G.fx[G.fi].o].n} lead ${s.o}-${s.m}`:`Series level ${s.m}-${s.o}`},dt=d=>new Date(d).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'2-digit'}).toUpperCase();
-const tabs=k=>'<span class=squadTabs>'+FM.map(f=>'<button class="btn '+(G[k]==f?'act':'')+'" onclick="G.${k}=\\''+f+'\\';G.sel=null;render()">'+f+'</button>').join('')+'</span>';
+const tabs=k=>`<span class=squadTabs>${FM.map(f=>`<button class="btn ${G[k]==f?'act':''}" onclick="G['${k}']='${f}';G.sel=null;render()">${f}</button>`).join('')}</span>`;
 const ncard=n=>'<div><b>'+n.src+'</b><p>'+n.h+'</p><p>'+n.b+'</p><div>♥ '+n.lk+'</div></div>';
 let nnb=0;
 const nn=d=>{if(nnb)return;G.nw=(G.nw+d+G.news.length)%G.news.length;render()};
