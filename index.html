@@ -321,9 +321,9 @@ function ball(c,bl,fd,mt){let s=c.bt[c.s],bo=c.bw[bl.n]||(c.bw[bl.n]={o:0,r:0,w:
  let hidden=(c.momentum?1.035:1)+(c.fieldBoost?0.045:0),pitch=M.pitch||{bias:0,type:'balanced'},pitchW=pitchWicketMod();let pw=cl(X.pw*(1+d*.02)*(mt==2?1.5:mt==0?.75:1)*(fd==2?1.15:fd==0?.9:1)*(1+.03*fc)*c.k*mS(c)*hidden*pitchW*(1+pitch.bias)*(bl.t=='S'&&M.f=='Test'?1+.04*M.inn:1),.005,.15);
  if(R()<pw){s.out=1;c.partnership=0;if(c.b-c.lastWicketBall<=12){c.quickWickets=(c.quickWickets||0)+1;if(c.quickWickets>=2)c.fieldBoost=12}else c.quickWickets=1;c.lastWicketBall=c.b;let fs=bm()?M.op:M.me,wk=bm()?(fs.find(z=>z.t=='W')||fs[0]).n:wkN(M.f),r=R(),bnm=s.p.n,tail=['F','S'].includes(s.p.t),late=c.b>(M.F.lim?M.F.lim*6*.78:300),head=/^T Head$/.test(bnm),marsh=/^M Marsh$/.test(bnm),runoutChance=tail&&late?.075:late?.06:.045;
  if(r<runoutChance){let fld=fs.filter(z=>z.n!=wk),fier=fld[~~(R()*Math.max(1,fld.length))]||{n:wk};s.how='run out ('+fier.n+')';}
- else if(head&&r<runoutChance+.17){s.how='b '+bl.n+' (chopped on)';}
+ else if(head&&r<runoutChance+.23){s.how='b '+bl.n+' (chopped on)';}
  else if(marsh&&r<runoutChance+.12){let fld=fs.filter(z=>z.n!=wk),fier=fld[~~(R()*Math.max(1,fld.length))]||{n:wk};s.how='c '+fier.n+' b '+bl.n+' (pull)';}
- else {let q=(r-runoutChance-(head?.17:0)-(marsh?.12:0))/Math.max(.01,1-runoutChance-(head?.17:0)-(marsh?.12:0));if(q<.59)s.how='c '+(R()<.25?wk:fs[~~(R()*fs.length)].n)+' b '+bl.n;else if(q<.80)s.how='b '+bl.n;else if(q<.93)s.how='lbw b '+bl.n;else s.how='st '+wk+' b '+bl.n;}
+ else {let q=(r-runoutChance-(head?.23:0)-(marsh?.12:0))/Math.max(.01,1-runoutChance-(head?.23:0)-(marsh?.12:0));if(q<.62)s.how='c '+(R()<.25?wk:fs[~~(R()*fs.length)].n)+' b '+bl.n;else if(q<.83)s.how='b '+bl.n;else if(q<.95)s.how='lbw b '+bl.n;else s.how='st '+wk+' b '+bl.n;}
  if(s.how.startsWith('st ')||s.how.startsWith('c '+wk+' b')){c.keep=c.keep||{};c.keep[wk]=c.keep[wk]||{c:0,s:0};if(s.how.startsWith('st '))c.keep[wk].s++;else c.keep[wk].c++;}if(!s.how.startsWith('run out'))bo.w++;c.w++;if(c.w<10){if(bm()){c.pendingWicket=true;c.pendingBatter=true;c.pendingStriker=c.s}else c.s=c.next++;}return 'W'}
  let dotBase=X.dot+(mt==0?.1:mt==2?-.12:0)+(fd==0?.03:fd==2?-.02:0)+d*.002+.01*fc;
  let dot=cl(dotBase*pitchBatMod(),.25,.92),r=0;
