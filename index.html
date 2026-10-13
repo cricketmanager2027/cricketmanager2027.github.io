@@ -663,5 +663,4 @@ function lowpoly(){let W=1600,H=900,c=9,r=6,pts=[];for(let j=0;j<=r;j++)for(let 
  let t='';for(let j=0;j<r;j++)for(let i=0;i<c;i++){let a=pts[j*(c+1)+i],b=pts[j*(c+1)+i+1],d=pts[(j+1)*(c+1)+i],e=pts[(j+1)*(c+1)+i+1];[[a,b,d],[b,e,d]].forEach(q=>{t+=`<polygon points="${q.map(p=>p.join(',')).join(' ')}" fill="hsl(${262+R()*28} ${35+R()*35}% ${14+R()*30}%)" fill-opacity=".5"/>`})}
  let d=document.createElement('div');d.className='lp';d.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="margin:0;border-radius:0">${t}</svg>`;document.body.prepend(d)}
 try{lowpoly()}catch(e){}
-start();
-</script></body></html>
+</script><script src="player-career.js"></script><script>start();</script></body></html>
