@@ -13,7 +13,7 @@ const COMP=[
  {id:'shield',name:'Sheffield Shield',format:'First-Class',overs:'Unlimited overs',desc:'Four-day red-ball cricket. Build long innings, bowl long spells and earn a place in the Test conversation.',colour:'#b84040'},
  {id:'oneDay',name:'Marsh One-Day Cup',format:'List A',overs:'50 overs per side',desc:'Australia’s domestic one-day competition. Score quickly, manage your innings and push for national selection.',colour:'#d7a52c'}
 ];
-let career=null,game=null,raf=0,mouse={x:0,y:0,inside:false},keys={};
+let career=null,game=null,raf=0,mouse={x:0,y:0,vx:0,vy:-1,inside:false},keys={};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function style(){if($('#pc-style'))return;const st=document.createElement('style');st.id='pc-style';st.textContent=`
@@ -51,7 +51,7 @@ function play(){
  document.body.appendChild(root);game.root=root;game.canvas=$('#pc-canvas');game.ctx=game.canvas.getContext('2d');game.batX=0;game.batY=0;
  const resize=()=>{if(!game||!game.canvas)return;const r=game.canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);game.canvas.width=Math.round(r.width*dpr);game.canvas.height=Math.round(r.height*dpr);game.ctx.setTransform(dpr,0,0,dpr,0,0);game.w=r.width;game.h=r.height;game.batX=game.w/2;game.batY=game.h*.77;game.pitch={x:game.w*.28,y:game.h*.16,w:game.w*.44,h:game.h*.68};game.fielders=Array.from({length:9},(_,i)=>{const a=i*Math.PI*2/9;return{x:game.w/2+Math.cos(a)*game.w*.29,y:game.h*.49+Math.sin(a)*game.h*.30}});if(game.phase==='ready')spawnBall()};
  game.onResize=resize;window.addEventListener('resize',resize);
- game.canvas.addEventListener('pointermove',e=>{const r=game.canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;mouse.inside=true;game.batX=Math.max(24,Math.min(game.w-24,mouse.x));game.batY=Math.max(game.h*.57,Math.min(game.h*.89,mouse.y))});
+ game.canvas.addEventListener('pointermove',e=>{const r=game.canvas.getBoundingClientRect();const nx=e.clientX-r.left,ny=e.clientY-r.top;mouse.vx=nx-mouse.x;mouse.vy=ny-mouse.y;mouse.x=nx;mouse.y=ny;mouse.inside=true;game.batX=Math.max(24,Math.min(game.w-24,mouse.x));game.batY=Math.max(game.h*.57,Math.min(game.h*.89,mouse.y))});
  game.canvas.addEventListener('pointerdown',()=>swing());
  window.addEventListener('keydown',game.keydown=e=>{if(e.code==='Space'){e.preventDefault();swing()}});
  resize();cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
@@ -60,7 +60,7 @@ function spawnBall(){if(!game)return;game.phase='bowling';game.ballX=game.w/2+(M
 function swing(){
  if(!game)return;if(game.phase==='ready'){spawnBall();return}if(game.phase!=='bowling')return;
  const dist=Math.hypot(game.ballX-game.batX,game.ballY-game.batY);
- if(dist<game.h*.13){const aimX=mouse.x-game.batX,aimY=mouse.y-game.batY,ang=Math.atan2(aimY,aimX),quality=Math.max(0,1-dist/(game.h*.13)),power=(.6+Math.random()*.65)*quality;
+ if(dist<game.h*.13){const aimX=mouse.vx||0,aimY=mouse.vy||-1,ang=Math.atan2(aimY,aimX),quality=Math.max(0,1-dist/(game.h*.13)),power=(.6+Math.random()*.65)*quality;
  let runs=0;const roll=Math.random();if(roll<.08)runs=0;else if(roll<.43)runs=1;else if(roll<.68)runs=2;else if(roll<.88)runs=4;else runs=6;
  if(quality<.24&&Math.random()<.48){game.wickets++;game.phase='pause';game.last='Bowled! Wicket falls.';game.shot={x:game.ballX,y:game.ballY,ang,power:0,runs:0};}
  else{game.runs+=runs;game.balls++;game.phase='shot';game.last=runs===0?'Dot ball':runs===1?'1 run':runs+' runs';game.shot={x:game.ballX,y:game.ballY,ang,power:Math.max(.25,power),runs};}
@@ -98,7 +98,7 @@ function finishMatch(){
 function quit(){if(!game)return;const g=game;cleanup();if(g.root)g.root.remove();game=null;lobby()}
 function closeGame(){if(!game)return;const g=game;cleanup();g.root?.remove();game=null}
 function cleanup(){cancelAnimationFrame(raf);if(game?.onResize)window.removeEventListener('resize',game.onResize);if(game?.keydown)window.removeEventListener('keydown',game.keydown)}
-function backHome(){if(game){cleanup();game.root?.remove();game=null}if(window.__pcOriginalStart)window.__pcOriginalStart();else home()}
+function backHome(){if(game){cleanup();game.root?.remove();game=null}if(window.start)window.start();else home()}
 window.pcHome=home;window.pcChooseComp=chooseComp;window.pcChooseState=id=>{career=career||{};career.state=id;chooseComp(career.comp||'shield')};window.pcCreate=create;window.pcStartCareer=startCareer;window.pcLobby=lobby;window.pcPlay=play;window.pcQuit=quit;window.pcCloseGame=closeGame;window.pcReplay=()=>{closeGame();play()};window.pcResume=resume;window.pcBackHome=backHome;
 window.__pcOriginalStart=window.start;
 window.start=function(){style();const old=window.__pcOriginalStart;$('#app').innerHTML='<div class="ttlp"><div class="tmlogo"><span>CM</span></div><h1 class="tt">Cricket Manager 27</h1><div style="display:flex;flex-direction:column;gap:12px;width:min(100%,360px)"><button class="go" onclick="nameG()">Begin Manager Career</button><button class="go" onclick="pcHome()">Player Career</button>'+(typeof saves==='function'&&saves().length?'<button class="go" onclick="lsv()">Manage Saves</button>':'')+'</div></div>'};
