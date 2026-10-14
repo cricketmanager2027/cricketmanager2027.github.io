@@ -1,0 +1,6 @@
+Cricket Manager 27 desktop package
+Source file: Pasted text(1).txt
+HTML bytes: 647,927
+HTML title present: True
+Script tags: 0
+Style tags: 0
