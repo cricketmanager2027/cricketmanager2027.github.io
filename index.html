@@ -602,10 +602,10 @@ function simDomesticAIMatch(a,b,date,round){
    bowlXI=(G.sq[bowl]||[]).slice().sort((x,y)=>((y.r.T20&&y.r.T20[1])||0)-((x.r.T20&&x.r.T20[1])||0)).slice(0,5);
   const batting=batXI.map((p,i)=>{
    const rating=(p.r.T20&&p.r.T20[0])||60,skill=cl(1+(rating-70)*.018,.62,1.48),
-    roleBase=i<4?34:i<7?19:8,
+    roleBase=i<4?8:i<7?3:0,
     duckChance=i<4?.10:i<7?.15:.23,
     exceptional=R()<.045,
-    raw=R()<duckChance?0:exceptional?42+Math.round(Math.pow(R(),.72)*62):Math.round((roleBase+Math.pow(R(),.78)*(i<4?47:i<7?29:18))*skill),
+    raw=R()<duckChance?0:exceptional?42+Math.round(Math.pow(R(),.72)*62):Math.round((roleBase+Math.pow(R(),.78)*(i<4?40:i<7?23:14))*skill),
     runs=cl(raw,0,130),
     srBase=i<4?133:i<7?119:91,
     strikeRate=cl(srBase+(rating-70)*.72+(R()-.5)*(i<4?48:i<7?42:38),55,205),
