@@ -597,14 +597,34 @@ function simDomesticAIMatch(a,b,date,round){
  const A=G.sq[a]||[],B=G.sq[b]||[];if(A.length<11||B.length<11)return null;
  const innings=[];
  for(let inn=0;inn<2;inn++){
-  const bat=inn===0?a:b,bowl=inn===0?b:a,batXI=(G.sq[bat]||[]).slice().sort((x,y)=>((y.r.T20&&y.r.T20[0])||0)-((x.r.T20&&x.r.T20[0])||0)).slice(0,10),bowlXI=(G.sq[bowl]||[]).slice().sort((x,y)=>((y.r.T20&&y.r.T20[1])||0)-((x.r.T20&&x.r.T20[1])||0)).slice(0,5);
-  const diff=trt(G.sq[bat],'T20')-trt(G.sq[bowl],'T20'),base=150+Math.round(diff*.85),total=cl(Math.round(base+(R()-.5)*62),85,245),weights=batXI.map((p,i)=>Math.max(.35,((p.r.T20&&p.r.T20[0])||60)/75*(i<4?1.22:1))),sum=weights.reduce((x,y)=>x+y,0);
-  let left=total,batting=batXI.map((p,i)=>{let runs=i===batXI.length-1?left:Math.max(0,Math.min(left,Math.round(total*weights[i]/sum*(.72+R()*.56))));left-=runs;let balls=Math.max(1,Math.round(runs/(.72+R()*.45)));return {n:p.n,r:runs,b:balls,four:Math.floor(runs/24),six:Math.floor(runs/48),out:i<9&&R()<.78}});
-  if(left>0)batting[0].r+=left;
-  const wickets=Math.min(10,Math.max(3,Math.round(6+(trt(G.sq[bowl],'T20')-trt(G.sq[bat],'T20'))*.07+(R()-.5)*3))),bw=[],overs=[4,4,4,4,4];let rem=wickets;
+  const bat=inn===0?a:b,bowl=inn===0?b:a,
+   batXI=(G.sq[bat]||[]).slice().sort((x,y)=>((y.r.T20&&y.r.T20[0])||0)-((x.r.T20&&x.r.T20[0])||0)).slice(0,11),
+   bowlXI=(G.sq[bowl]||[]).slice().sort((x,y)=>((y.r.T20&&y.r.T20[1])||0)-((x.r.T20&&x.r.T20[1])||0)).slice(0,5);
+  const batting=batXI.map((p,i)=>{
+   const rating=(p.r.T20&&p.r.T20[0])||60,skill=cl(1+(rating-70)*.018,.62,1.48),
+    roleBase=i<4?34:i<7?19:8,
+    duckChance=i<4?.10:i<7?.15:.23,
+    exceptional=R()<.045,
+    raw=R()<duckChance?0:exceptional?42+Math.round(Math.pow(R(),.72)*62):Math.round((roleBase+Math.pow(R(),.78)*(i<4?47:i<7?29:18))*skill),
+    runs=cl(raw,0,130),
+    srBase=i<4?133:i<7?119:91,
+    strikeRate=cl(srBase+(rating-70)*.72+(R()-.5)*(i<4?48:i<7?42:38),55,205),
+    balls=runs===0?Math.max(1,Math.round(2+R()*8)):Math.max(1,Math.round(runs*100/strikeRate)),
+    boundaryShare=cl(.42+(rating-70)*.004+(R()-.5)*.2,.2,.68),
+    six=Math.min(Math.floor(runs/6),Math.floor((runs*boundaryShare/2)/6)),
+    four=Math.min(Math.floor((runs-six*6)/4),Math.max(0,Math.round(runs*boundaryShare/4)-six));
+   return {n:p.n,r:runs,b:balls,four,six,out:false};
+  });
+  const diff=trt(G.sq[bat],'T20')-trt(G.sq[bowl],'T20'),
+   extras=Math.round(5+R()*10),
+   total=batting.reduce((sum,x)=>sum+x.r,0)+extras,
+   wickets=Math.min(10,Math.max(3,Math.round(6+(trt(G.sq[bowl],'T20')-trt(G.sq[bat],'T20'))*.07+(R()-.5)*3))),
+   bw=[],overs=[4,4,4,4,4];let rem=wickets;
+  const outOrder=batting.map((x,i)=>i).sort(()=>R()-.5);
+  outOrder.slice(0,wickets).forEach(i=>batting[i].out=true);
   bowlXI.forEach((p,i)=>{let w=i===bowlXI.length-1?rem:Math.min(rem,Math.max(0,Math.round((wickets/bowlXI.length)*(1+((p.r.T20&&p.r.T20[1])||60)/85-1)+(R()-.5)*1.4)));rem-=w;let conceded=Math.max(8,Math.round(total/5*(.82+R()*.36))),z=statPlayer('T20',p.n,bowl);z.wkts+=w;z.runsConceded+=conceded;if(w>z.bestW||(w===z.bestW&&conceded<z.bestR)){z.bestW=w;z.bestR=conceded}bw.push({n:p.n,o:overs[i],r:conceded,w});});
   batting.forEach(x=>{let z=statPlayer('T20',x.n,bat);z.runs+=x.r;z.balls+=x.b;z.sixes+=x.six;z.high=Math.max(z.high,x.r)});
-  innings.push({team:bat,r:total,w:wickets,batting,bowling:bw});
+  innings.push({team:bat,r:total,w:wickets,extras,batting,bowling:bw});
  }
  const x=innings[0],y=innings[1],winner=x.r>y.r?a:y.r>x.r?b:null,res=winner?T[winner].n+' won by '+Math.abs(x.r-y.r)+' runs':'Match tied';
  addRes('T20',a,b,winner===a?'a':winner===b?'b':'d');
