@@ -664,5 +664,79 @@ function lowpoly(){let W=1600,H=900,c=9,r=6,pts=[];for(let j=0;j<=r;j++)for(let 
  let t='';for(let j=0;j<r;j++)for(let i=0;i<c;i++){let a=pts[j*(c+1)+i],b=pts[j*(c+1)+i+1],d=pts[(j+1)*(c+1)+i],e=pts[(j+1)*(c+1)+i+1];[[a,b,d],[b,e,d]].forEach(q=>{t+=`<polygon points="${q.map(p=>p.join(',')).join(' ')}" fill="hsl(${262+R()*28} ${35+R()*35}% ${14+R()*30}%)" fill-opacity=".5"/>`})}
  let d=document.createElement('div');d.className='lp';d.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="margin:0;border-radius:0">${t}</svg>`;document.body.prepend(d)}
 try{lowpoly()}catch(e){}
+
+/* HUNDRED_DRAFT_PATCH */
+const BASE_TEAM_CODES=C.slice();
+const HUNDRED_CODES=['HUN_BPH','HUN_LSP','HUN_MSG','HUN_MIL','HUN_SOB','HUN_SRL','HUN_WFI','HUN_TRR'];
+const HUNDRED_NAMES=['Birmingham Phoenix','London Spirit','Manchester Super Giants','MI London','Southern Brave','Sunrisers Leeds','Welsh Fire','Trent Rockets'];
+const HUNDRED_COLORS=[['#ef3d32','#fff'],['#17204b','#fff'],['#b31f36','#fff'],['#142b54','#fff'],['#e51c35','#fff'],['#ef6b21','#fff'],['#d7193f','#fff'],['#e8d934','#171717']];
+const HUNDRED_SHORT=['BPH','LSP','MSG','MIL','SOB','SRL','WFI','TRR'];
+const HUNDRED_SEED=[
+'J Bairstow W,H Brook B,L Livingstone A,B Duckett B,C Woakes A,S Curran A,J Archer F,A Rashid S,T Banton W,D Willey A,P Salt W',
+'Kane Williamson B,D Lawrence B,J Buttler W,L Dawson A,N Ellis F,L Wood F,M Leask A,D Wiese A,R Rossouw B,A Joseph F,T Mills F',
+'J Root B,P Salt W,H Klaasen W,S Narine A,A Russell A,M Santner A,J Overton A,T Boult F,M Wood F,S Lamichhane S',
+'S Yadav B,R Pant W,T Varma B,H Pandya A,J Bumrah F,S Yadav B,N Pooran W,K Pollard A,R Shepherd A,A Nortje F,M Nabi A',
+'J Vince B,A Finch B,R Powell B,J Jordan A,T Mills F,C Jordan A,A Agar S,J Richardson F,Q de Kock W,D Sams A',
+'H Brook B,D Malan B,W Jacks A,D Willey A,A Zampa S,T David B,J Inglis W,M Stoinis A,J Behrendorff F,L Wood F',
+'J Root B,J Bairstow W,T Banton W,D Willey A,M Ali A,Harmer S,J Archer F,D Payne F,R Topley F,T Curran A',
+'A Hales B,J Root B,T David B,S Billings W,L Livingstone A,Rashid Khan A,J Overton A,L Wood F,S Cook F,M Wood F'
+];
+const HUNDRED_LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="10" fill="#09090d"/><path d="M0 0h64v64H0z" fill="#ec008c"/><path d="M12 15h11v34H12zm29 0h11v34H41zM23 27h18v10H23z" fill="#fff"/><text x="32" y="59" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="7" fill="#fff">CM</text></svg>';
+(function setupHundred(){
+ HUNDRED_CODES.forEach((code,i)=>{const roster=HUNDRED_SEED[i];T[code]={n:HUNDRED_NAMES[i],b:80,p:roster};if(!C.includes(code))C.push(code);DT[code]=HUNDRED_NAMES[i];DN[code]=HUNDRED_SHORT[i];DCOL[code]=HUNDRED_COLORS[i];DOVR[code]=80+i%5;});
+ DOM.HUNDRED={name:'The Hundred',short:'THE HUNDRED',teams:HUNDRED_CODES.slice()};
+ OSR.HUNDRED={xi:4,sq:99};
+ POF.HUNDRED=['Qualifier','Eliminator','Challenger','Final'];
+ const link=document.createElement('link');link.rel='icon';link.type='image/svg+xml';link.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(HUNDRED_LOGO);document.head.appendChild(link);
+})();
+let HUNDRED_DRAFT=null,HUNDRED_ROSTERS=null;
+const _modeSelectHundred=modeSelect;
+modeSelect=function(){C.splice(0,C.length,...BASE_TEAM_CODES);return _modeSelectHundred()};
+const _domesticLeagueHundred=domesticLeague;
+domesticLeague=function(){C.splice(0,C.length,...BASE_TEAM_CODES);return _domesticLeagueHundred()};
+const _domesticTeamsHundred=domesticTeams;
+domesticTeams=function(l){
+ if(l!=='HUNDRED')return _domesticTeamsHundred(l);
+ setMode(l);
+ $('#app').innerHTML='<main><section class=l style="max-width:900px;margin:auto"><h2>Choose Your Hundred Team</h2><div class=grid>'+HUNDRED_CODES.map((c,i)=>'<div class="tm tc" style="background:'+DCOL[c][0]+';color:'+DCOL[c][1]+';border-color:'+DCOL[c][1]+'55" onclick="beginHundredDraft(\''+c+'\')"><div style="font-size:28px;font-weight:900;letter-spacing:2px">'+HUNDRED_SHORT[i]+'</div><h3>'+DT[c]+'</h3><em>15-player draft</em></div>').join('')+'</div><button class=btn onclick="domesticLeague()">← Back</button></section></main>';
+};
+const _pickHundred=pick;
+function beginHundredDraft(team){
+ HUNDRED_DRAFT={team,round:1,chosen:[],pool:hundredPlayerPool()};
+ hundredDraftScreen();
+}
+function hundredPlayerPool(){
+ const seen=new Set(),out=[];
+ Object.keys(T).forEach(code=>{if(HUNDRED_CODES.includes(code))return;String(T[code].p||'').split(',').forEach(raw=>{let x=raw.trim(),j=x.lastIndexOf(' ');if(j<1)return;let n=x.slice(0,j),role=x.slice(j+1);if(!seen.has(n)){seen.add(n);out.push({n,role,base:72+hs(n)%17})}})});
+ String(DPOOL.IPL+','+DPOOL.BBL).split(',').forEach(raw=>{let x=raw.trim(),j=x.lastIndexOf(' ');if(j<1)return;let n=x.slice(0,j);if(!seen.has(n)){seen.add(n);out.push({n,role:x.slice(j+1),base:72+hs(n)%17})}});
+ return out;
+}
+function hundredDraftScreen(){
+ const d=HUNDRED_DRAFT;if(!d)return;
+ const opts=d.options||(d.options=d.pool.slice().sort(()=>R()-.5).slice(0,6));
+ $('#app').innerHTML='<main><section class=l style="max-width:900px;margin:auto"><h2>The Hundred · Player Draft</h2><p>'+DT[d.team]+' · Round '+d.round+' of 15</p><div class=panel><b>Your picks</b><p>'+(d.chosen.map((p,i)=>(i+1)+'. '+p.n).join(' · ')||'Your squad is waiting for its first pick.')+'</p></div><div class=grid>'+opts.map((p,i)=>'<div class=tm onclick="hundredChoose('+i+')"><h3>'+p.n+'</h3><b>'+({B:'Batter',W:'Wicketkeeper',A:'All-rounder',F:'Fast bowler',S:'Spinner'}[p.role]||'Player')+'</b><p>OVR '+p.base+'</p><em>Select player</em></div>').join('')+'</div><p><em>Six players are available each round. The other seven franchises make their picks automatically.</em></p><button class=btn onclick="domesticTeams(\'HUNDRED\')">← Change team</button></section></main>';
+}
+function hundredChoose(i){
+ const d=HUNDRED_DRAFT;if(!d||!d.options||!d.options[i])return;
+ const chosen=d.options[i];d.chosen.push(chosen);d.pool=d.pool.filter(p=>p.n!==chosen.n);
+ HUNDRED_CODES.filter(c=>c!==d.team).forEach(()=>{if(d.pool.length)d.pool.splice(~~(R()*d.pool.length),1)});
+ d.options=null;d.round++;
+ if(d.chosen.length>=15){finishHundredDraft();return}
+ hundredDraftScreen();
+}
+function finishHundredDraft(){
+ const d=HUNDRED_DRAFT,available=d.pool.slice(),rosters={};rosters[d.team]=d.chosen.slice();
+ HUNDRED_CODES.filter(c=>c!==d.team).forEach(c=>{rosters[c]=[];for(let i=0;i<15&&available.length;i++)rosters[c].push(available.splice(~~(R()*available.length),1)[0])});
+ HUNDRED_ROSTERS=rosters;
+ _pickHundred(d.team,'HUNDRED');
+ C.splice(0,C.length,...HUNDRED_CODES);
+ HUNDRED_CODES.forEach(c=>{G.sq[c]=(rosters[c]||[]).map(p=>{let q=mk1(p.n,p.role,p.base);q.tm=c;return q});});
+ G.xi={};FM.forEach(f=>G.xi[f]=pickXI(G.sq[G.me],f,G.me));
+ G.cap={};G.wk={};domSeason();G.tab='Central';render();
+ HUNDRED_DRAFT=null;
+}
+const _rulesPopHundred=rulesPop;
+rulesPop=function(n,why){if(G&&G.dl==='HUNDRED'){popup('<b>The Hundred squad rules</b><br><br>Build a 15-player squad through the draft. You can select up to four international players in your playing XI.');return}_rulesPopHundred(n,why)};
+
 start();
 </script></body></html>
