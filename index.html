@@ -582,7 +582,7 @@ function domesticTeams(l){setMode(l);let d=DOM[l];$('#app').innerHTML=`<main><se
 function developPlayers(){let seen=new Set();Object.values(G.sq||{}).flat().forEach(p=>{if(!p||seen.has(p.n))return;seen.add(p.n);if(p.pot=='late'&&p.a>=27&&p.a<=29&&p.dev<2){let j=4+hs(p.n+'late'+p.a)%4;FM.forEach(f=>{p.r[f][0]+=j;p.r[f][1]+=Math.max(1,Math.round(j*.65))});p.dev=(p.dev||0)+1}else if(p.pot=='bust'&&p.a>=23&&p.a<=25&&p.dev<1){let j=2+hs(p.n+'bust')%3;FM.forEach(f=>{p.r[f][0]-=j;p.r[f][1]-=j});p.dev=(p.dev||0)+1}})}
 function domSeason(){developPlayers();enforceOverseasSquads();let sh=a=>a.slice().sort(()=>R()-.5),o=C.filter(k=>k!=G.me);G.yr=''+(2026+G.season);G.tb={};FM.forEach(f=>{G.tb[f]={};C.forEach(k=>G.tb[f][k]={p:0,w:0,d:0,l:0,pt:0})});G.fi=0;G.sr={};G.ss=G.d;G.fd=1;G.sid=0;G.tn=null;G.ko=[];G.po=null;G.cal=[];G.aiFixtures=[];
 G.fx=sh([...o,...sh(o)].slice(0,14)).map((x,i)=>({o:x,f:'T20',g:i+1,n:14,sid:G.sid++,ev:G.lg+' '+G.yr,lg:1,d:G.d+864e5*(7+3*i)}));
-let aiTeams=DOM[G.dl].teams.filter(x=>x!=G.me),aiRounds=[];G.fx.forEach((uf,round)=>{let rest=aiTeams.filter(x=>x!=uf.o),pool=sh(rest),games=[];for(let j=0;j<pool.length;j+=2)if(pool[j+1])games.push([pool[j],pool[j+1]]);aiRounds.push(games)});G.aiRounds=aiRounds;G.obj=[...(G.obj||[]).filter(z=>z.done&&!z.cl),...genObjs()];G.pend=G.pend||[];G.sq[G.me].forEach(p=>{if(p.ct==null)p.ct=(DCT[G.me]&&DCT[G.me][p.n])||G.season+hs(p.n)%3});G.pool=mkPool()}
+let aiTeams=DOM[G.dl].teams.filter(x=>x!=G.me),aiRounds=[];G.fx.forEach((uf,round)=>{let rest=aiTeams.filter(x=>x!=uf.o),pool=sh(rest),games=[];for(let j=0;j<pool.length;j+=2)if(pool[j+1])games.push([pool[j],pool[j+1]]);aiRounds.push(games)});G.aiRounds=aiRounds;G.aiFixtures=aiRounds.flatMap((games,round)=>games.map(([a,b])=>({id:'ai-'+G.season+'-'+round+'-'+a+'-'+b,ai:1,round,d:G.fx[round].d,a,b,f:'T20',res:null,w:null,sc:null,innings:[]})));G.obj=[...(G.obj||[]).filter(z=>z.done&&!z.cl),...genObjs()];G.pend=G.pend||[];G.sq[G.me].forEach(p=>{if(p.ct==null)p.ct=(DCT[G.me]&&DCT[G.me][p.n])||G.season+hs(p.n)%3});G.pool=mkPool()}
 const POF={IPL:['Qualifier 1','Eliminator','Qualifier 2','Final'],BBL:['Qualifier','Knockout','Challenger','Final']},POK=['q1','el','q2','fin'];
 const poTeams=(po,k)=>{let t=po.t,r=po.r;if(k=='q1')return[t[0],t[1]];if(k=='el')return[t[2],t[3]];
  if(k=='q2')return r.q1&&r.q1.w&&r.el&&r.el.w?[r.q1.w==t[0]?t[1]:t[0],r.el.w]:[null,null];
@@ -609,7 +609,7 @@ function simDomesticAIMatch(a,b,date,round){
  const x=innings[0],y=innings[1],winner=x.r>y.r?a:y.r>x.r?b:null,res=winner?T[winner].n+' won by '+Math.abs(x.r-y.r)+' runs':'Match tied';
  addRes('T20',a,b,winner===a?'a':winner===b?'b':'d');
  const fx={id:'ai-'+G.season+'-'+round+'-'+a+'-'+b,ai:1,round,d:date,a,b,f:'T20',res,w:winner,sc:x.r+'/'+x.w+' · '+y.r+'/'+y.w,innings};
- G.aiFixtures=G.aiFixtures||[];G.aiFixtures.push(fx);return fx;
+ G.aiFixtures=G.aiFixtures||[];let scheduled=G.aiFixtures.find(x=>x.id===fx.id);if(scheduled)Object.assign(scheduled,fx);else G.aiFixtures.push(fx);return fx;
 }
 function simDomRound(round,skipA,skipB){if(!G.dom||!G.aiRounds||!G.aiRounds[round])return;G.aiRounds[round].forEach(pair=>{let a=pair[0],b=pair[1];if(a==skipA||a==skipB||b==skipA||b==skipB)return;simDomesticAIMatch(a,b,G.fx[round]?G.fx[round].d:G.d,round);});}
 function domAdv(f,r){
