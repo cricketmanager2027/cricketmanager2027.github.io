@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Cricket Manager 27</title><link rel="icon" type="image/svg+xml" href="favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Cricket Manager 27</title><link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--ac:#b6f23c}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
@@ -687,7 +687,7 @@ const HUNDRED_LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
  DOM.HUNDRED={name:'The Hundred',short:'THE HUNDRED',teams:HUNDRED_CODES.slice()};
  OSR.HUNDRED={xi:4,sq:99};
  POF.HUNDRED=['Qualifier','Eliminator','Challenger','Final'];
- const link=document.createElement('link');link.rel='icon';link.type='image/svg+xml';link.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(HUNDRED_LOGO);document.head.appendChild(link);
+ // Do not override the site-wide purple CM favicon with a competition-specific icon.
 })();
 let HUNDRED_DRAFT=null,HUNDRED_ROSTERS=null;
 const _modeSelectHundred=modeSelect;
