@@ -611,7 +611,7 @@ function simDomesticAIMatch(a,b,date,round){
  const fx={id:'ai-'+G.season+'-'+round+'-'+a+'-'+b,ai:1,round,d:date,a,b,f:'T20',res,w:winner,sc:x.r+'/'+x.w+' · '+y.r+'/'+y.w,innings};
  G.aiFixtures=G.aiFixtures||[];let scheduled=G.aiFixtures.find(x=>x.id===fx.id);if(scheduled)Object.assign(scheduled,fx);else G.aiFixtures.push(fx);return fx;
 }
-function simDomRound(round,skipA,skipB){if(!G.dom||!G.aiRounds||!G.aiRounds[round])return;G.aiRounds[round].forEach(pair=>{let a=pair[0],b=pair[1];if(a==skipA||a==skipB||b==skipA||b==skipB)return;simDomesticAIMatch(a,b,G.fx[round]?G.fx[round].d:G.d,round);});}
+function simDomRound(round,skipA,skipB){if(!G.dom||!G.aiRounds||!G.aiRounds[round])return;G.aiFixtures=G.aiFixtures||G.aiRounds.flatMap((games,ri)=>games.map(([a,b])=>({id:'ai-'+G.season+'-'+ri+'-'+a+'-'+b,ai:1,round:ri,d:G.fx[ri]?G.fx[ri].d:G.d,a,b,f:'T20',res:null,w:null,sc:null,innings:[]})));G.aiRounds[round].forEach(pair=>{let a=pair[0],b=pair[1];if(a==skipA||a==skipB||b==skipA||b==skipB)return;simDomesticAIMatch(a,b,G.fx[round]?G.fx[round].d:G.d,round);});}
 function domAdv(f,r){
  if(f.lg){if(G.fx[G.fi])return;let t=rk('T20').slice(0,4);G.po={t,r:{}};G.log.push(t.includes(G.me)?'Reached the '+G.lg+' playoffs':'Missed the '+G.lg+' playoffs');poStep()}
  else if(f.ko&&G.po){let x=G.po.r[f.pk];if(x){x.w=r=='W'?G.me:f.o;if(r!='W'&&f.pk!='q1')G.log.push(f.pk=='fin'?'Lost the '+G.lg+' final':'Knocked out of the '+G.lg+' in the '+f.ko)}poStep()}}
