@@ -1129,11 +1129,31 @@ function cm27PrepFor(f){
  }
  return G.matchPrep;
 }
+function cm27AutoKeeperXI(xi,squad,f){
+ const eligible=(squad||[]).filter(p=>!(p.rf||[]).includes(f)&&!p.inj);
+ if(!xi.some(p=>p.t==='W')){
+  const keepers=eligible.filter(p=>p.t==='W').sort((a,b)=>(b.r[f][0]+b.r[f][1])-(a.r[f][0]+a.r[f][1]));
+  const keeper=keepers[0]||eligible.filter(p=>xi.some(x=>x.n===p.n)).sort((a,b)=>(b.r[f][0]+b.r[f][1])-(a.r[f][0]+a.r[f][1]))[0];
+  if(keeper){
+   if(!xi.some(p=>p.n===keeper.n)){
+    const replace=[...xi].filter(p=>p.t!=='W').sort((a,b)=>{
+     const roleScore=p=>p.t==='B'?p.r[f][0]*1.15:p.t==='A'?(p.r[f][0]+p.r[f][1])*0.72:p.r[f][1]*0.55;
+     return roleScore(a)-roleScore(b);
+    })[0]||xi[xi.length-1];
+    xi=xi.filter(p=>p.n!==replace.n);
+    xi.push(keeper);
+   }
+   return {xi,wk:keeper.n};
+  }
+ }
+ return {xi,wk:(xi.find(p=>p.t==='W')||{}).n||''};
+}
 function cm27InitialMatchLineups(f){
  const mine=(G.xi[f.f]||pickXI(G.sq[G.me],f.f,G.me)).slice();
- const opp=pickXI((G.sq[f.o]||[]),f.f,f.o).slice();
+ const rawOpp=pickXI((G.sq[f.o]||[]),f.f,f.o).slice();
+ const autoOpp=cm27AutoKeeperXI(rawOpp,G.sq[f.o]||[],f.f),opp=autoOpp.xi;
  const chooseCaptain=(arr,team)=>((G.cap&&G.cap[f.f]&&team===G.me&&arr.some(p=>p.n===G.cap[f.f]))?G.cap[f.f]:(arr.slice().sort((a,b)=>(b.a||0)-(a.a||0))[0]||{}).n);
- const chooseKeeper=(arr,team)=>((G.wk&&G.wk[f.f]&&team===G.me&&arr.some(p=>p.n===G.wk[f.f]))?G.wk[f.f]:(arr.find(p=>p.t==='W')||{}).n);
+ const chooseKeeper=(arr,team)=>team===G.me?((G.wk&&G.wk[f.f]&&arr.some(p=>p.n===G.wk[f.f]&&p.t==='W'))?G.wk[f.f]:(arr.find(p=>p.t==='W')||{}).n):autoOpp.wk;
  return {id:f.sid+'-'+G.fi,format:f.f,teams:{
   me:{code:G.me,xi:mine,cap:chooseCaptain(mine,G.me),wk:chooseKeeper(mine,G.me)},
   op:{code:f.o,xi:opp,cap:chooseCaptain(opp,f.o),wk:chooseKeeper(opp,f.o)}
@@ -1179,8 +1199,8 @@ function cm27MatchPreview(){
 }
 function cm27StartPreparedMatch(){
  const f=G.fx[G.fi],l=G.matchLineups||(G.matchLineups=cm27InitialMatchLineups(f)),m=l.teams.me,o=l.teams.op;
- const valid=q=>q.xi.length===11&&q.cap&&q.xi.some(p=>p.n===q.cap)&&q.wk&&q.xi.some(p=>p.n===q.wk&&p.t==='W');
- if(!valid(m)||!valid(o))return toast('Both teams need 11 players, a captain and a wicketkeeper.');
+ const valid=(q,side)=>q.xi.length===11&&q.cap&&q.xi.some(p=>p.n===q.cap)&&q.wk&&q.xi.some(p=>p.n===q.wk)&&(side==='op'||q.xi.some(p=>p.n===q.wk&&p.t==='W'));
+ if(!valid(m,'me')||!valid(o,'op'))return toast('Your team needs 11 players, a captain and a selected wicketkeeper.');
  const old={xi:G.xi[f.f],cap:G.cap&&G.cap[f.f],wk:G.wk&&G.wk[f.f]};
  G.xi[f.f]=m.xi.slice();G.cap=G.cap||{};G.wk=G.wk||{};G.cap[f.f]=m.cap;G.wk[f.f]=m.wk;
  const oldRandom=Math.random;
