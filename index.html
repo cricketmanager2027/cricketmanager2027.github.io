@@ -318,7 +318,7 @@ function simAIPlayerStats(f,a,b){
   let bt=inn%2?A:B,bo=inn%2?B:A,team=inn%2?a:b,opponent=inn%2?b:a,
    order=bats(bt).slice(0,10),bowlers=bowls(bo);
   // Test innings vary substantially; limited-overs totals follow their format.
-  let total=f=='Test'?180+~~(R()*221):f=='ODI'?215+~~(R()*116):135+~~(R()*76);
+  let total=f=='Test'?180+~~(R()*151):f=='ODI'?215+~~(R()*116):135+~~(R()*76);
   let extras=f=='Test'?7+~~(R()*19):f=='ODI'?8+~~(R()*17):5+~~(R()*13);
   let target=Math.max(90,total-extras),weights=order.map((p,i)=>{
    let rating=(p.r[f]&&p.r[f][0])||65;
@@ -329,19 +329,19 @@ function simAIPlayerStats(f,a,b){
    if(i>=6&&R()<.58)share=~~(R()*17);
    else if(i>=3&&R()<.3)share=~~(R()*32);
    else if(i<3&&R()<.14)share=~~(R()*12);
-   let cap=f=='Test'?Math.round(75+(rating-65)*1.15+R()*65):f=='ODI'?Math.round(55+(rating-65)*1.05+R()*55):Math.round(45+(rating-65)*.95+R()*45);
+   let cap=f=='Test'?Math.min(105,Math.round(58+(rating-65)*.55+R()*34)):f=='ODI'?Math.round(55+(rating-65)*1.05+R()*55):Math.round(45+(rating-65)*.95+R()*45);
    return Math.max(0,Math.min(share,cap));
   });
   let sum=scores.reduce((x,y)=>x+y,0),guard=0;
   while(sum<target&&guard++<100){
-   let i=~~(R()*Math.min(6,order.length)),cap=f=='Test'?190:f=='ODI'?160:130,add=Math.min(target-sum,Math.max(0,cap-scores[i]));
+   let i=~~(R()*Math.min(6,order.length)),cap=f=='Test'?105:f=='ODI'?160:130,add=Math.min(target-sum,Math.max(0,cap-scores[i]));
    if(!add){if(scores.slice(0,6).every(v=>v>=cap))break;continue}
    scores[i]+=add;sum+=add;
   }
   if(sum>target){let excess=sum-target;for(let i=scores.length-1;i>=0&&excess;i--){let take=Math.min(excess,scores[i]);scores[i]-=take;excess-=take}}
   order.forEach((p,i)=>{
    let runs=scores[i],rating=(p.r[f]&&p.r[f][0])||65,
-    sr=f=='Test'?cl(42+(rating-70)*.18+(R()-.5)*12,30,58):f=='ODI'?cl(78+(rating-70)*.25+(R()-.5)*15,58,100):cl(125+(rating-70)*.35+(R()-.5)*20,90,155),
+    sr=f=='Test'?cl(40+(rating-70)*.16+(R()-.5)*10,30,54):f=='ODI'?cl(78+(rating-70)*.25+(R()-.5)*15,58,100):cl(125+(rating-70)*.35+(R()-.5)*20,90,155),
     balls=runs?Math.max(1,Math.round(runs*100/sr)):1,z=statPlayer(f,p.n,team);
    z.runs+=runs;z.balls+=balls;z.sixes+=Math.min(Math.floor(runs/18),Math.floor(runs*(f=='Test'?.025:f=='ODI'?.055:.105)));z.high=Math.max(z.high,runs);
    if(!best||runs>best.r)best={n:p.n,t:team,r:runs};
