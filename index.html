@@ -822,7 +822,7 @@ const HUNDRED_SEED=[
 'J Root B,J Bairstow W,T Banton W,D Willey A,M Ali A,Harmer S,J Archer F,D Payne F,R Topley F,T Curran A',
 'A Hales B,J Root B,T David B,S Billings W,L Livingstone A,Rashid Khan A,J Overton A,L Wood F,S Cook F,M Wood F'
 ];
-const HUNDRED_LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="10" fill="#09090d"/><path d="M0 0h64v64H0z" fill="#ec008c"/><path d="M12 15h11v34H12zm29 0h11v34H41zM23 27h18v10H23z" fill="#fff"/><text x="32" y="59" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="7" fill="#fff">CM</text></svg>';
+
 (function setupHundred(){
  HUNDRED_CODES.forEach((code,i)=>{const roster=HUNDRED_SEED[i];T[code]={n:HUNDRED_NAMES[i],b:80,p:roster};if(!C.includes(code))C.push(code);DT[code]=HUNDRED_NAMES[i];DN[code]=HUNDRED_SHORT[i];DCOL[code]=HUNDRED_COLORS[i];DOVR[code]=80+i%5;});
  DOM.HUNDRED={name:'The Hundred',short:'THE HUNDRED',teams:HUNDRED_CODES.slice()};
