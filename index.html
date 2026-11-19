@@ -348,8 +348,8 @@ Office(){G.u.sc=G.u.sc||0;refreshObjState();const up=(k,l,d)=>`<div class=panel>
  <div class=panel><b>Objectives · Season ${G.season}</b><br><em>Complete an objective to claim a cash prize.</em>${(G.obj||[]).map((o,i)=>`<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #fff2;margin-top:8px"><div style=flex:1>${o.d}<br><em>${o.cl?'Prize claimed':o.done?'Completed!':objProg(o)}</em></div>${o.cl?'<b class=f>✔</b>':o.done?`<button class="btn act" onclick="claim(${i})">Claim $${o.p}M</button>`:`<em>Prize $${o.p}M</em>`}</div>`).join('')}</div>
  <div class=grid style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">${up('f','Fielding Coach','More dots and wickets when bowling')}${up('n','Nets',`Training gives +${1+G.u.n} per boost now (+1 per level). Next level: +${2+G.u.n}`)}${G.dom?up('sc','Scouts',`Level ${G.u.sc}: ${5+2*G.u.sc} scouted players, ${6*G.u.sc}% cheaper signings. Next level: ${5+2*(G.u.sc+1)} players, ${6*(G.u.sc+1)}% cheaper`):up('m','Medical Staff',`Injuries heal ${G.u.m} match${G.u.m==1?'':'es'} faster (min 1 match). Next level: ${G.u.m+1}`)}${up('s','Social Media Manager',`+$${(.5*G.u.s).toFixed(1)}M extra per match`)}</div>
  <div class=panel><b>Trophy cabinet</b>${cab()}</div><div class=panel><b>Manager record</b><br>${FM.map(f=>`${f}: ${G.rec[f][0]}W ${G.rec[f][1]}D/T ${G.rec[f][2]}L`).join('<br>')}</div></section>`},
-Standings(){if(G.dom&&G.sv=='Stats')return leagueStatsView();if(G.dom)return domStand();let v=G.sv||'WTC',fmt=v=='ODI'||v=='T20'?v:'Test',bt=['WTC','ODI','T20','Events','Stats'].map(x=>`<button class="btn ${v==x?'act':''}" onclick="G.sv='${x}';render()">${x=='WTC'?'WTC Table':x=='Events'?'Series & Events':x=='Stats'?'League Statistics':x+' Table'}</button>`).join('');
-if(v=='Stats')return leagueStatsView();if(v=='Events'){let a=G.cal.filter(e=>e.res!==null&&e.w!==undefined&&e.p).reverse();return `<section class=l style=max-width:840px><h2>Series &amp; Events</h2>${bt}${a.map(e=>{let W=e.w==G.me,D=!e.w;return `<div class=panel style="margin:8px 0;display:flex;align-items:center;gap:12px"><span class=wl style="background:${D?'#888':W?'#2ecc71':'#e74c3c'}">${D?'D':W?'W':'L'}</span><div style=flex:1>${clg(e.ev,30)}<b>${e.ev}</b> <em>${e.f}</em><br>${e.b?`${flag(e.a)}${T[e.a].n} v ${flag(e.b)}${T[e.b].n}`:`${flag(e.a)}${T[e.a].n}`}</div><b style="font-size:22px">${e.sc}</b></div>`}).join('')||"<p>Let's get going, play some games!</p>"}</section>`}
+Standings(){if(G.dom&&G.sv=='Stats')return leagueStatsView();if(G.dom)return domStand();let v=G.sv||'WTC',fmt=v=='ODI'||v=='T20'?v:'Test',bt=['WTC','ODI','T20','Stats'].map(x=>`<button class="btn ${v==x?'act':''}" onclick="G.sv='${x}';render()">${x=='WTC'?'WTC Table':x=='Stats'?'League Statistics':x+' Table'}</button>`).join('');
+if(v=='Stats')return leagueStatsView();
 return `<section class=l style=max-width:840px><h2>${fmt=='Test'?'World Test Championship':fmt+' Standings'} · Season ${G.season}</h2>${bt}<div class=wrap><table><tr><th>#<th>Team<th>P<th>W<th>D<th>L<th>Pts<th>${fmt=='Test'?'PCT':'NRR'}</tr>${rk(fmt).map((c,i)=>{let t=G.tb[fmt][c];return `<tr class="${c==G.me?'me':''}"><td>${i+1}<td>${flag(c)}${T[c].n}<td>${t.p}<td>${t.w}<td>${t.d}<td>${t.l}<td>${t.pt}<td>${fmt=='Test'?pc('Test',c).toFixed(1):t.p?(t.pt/t.p).toFixed(2):'0.00'}</tr>`}).join('')}</table></div></section>`}}
 const tab=t=>{G.tab=t;G.cf=null;if(t=='Calendar'){G.cy=null;G.cmo=null;G.cd=null}render();window.scrollTo(0,0);let w=$('.wrap');if(w)w.scrollTop=0};
 function render(){if(M&&!M.closed)return mrender();if(G.news.length>10)G.news.length=10;if(G.nw>=G.news.length)G.nw=0;save();if(G.rv)return rvr();let fp=window.FP,fn=G.fan??50;window.FP=fn;let sy=window.scrollY,wb=$('.wrap'),wt=wb?wb.scrollTop:0;$('#app').innerHTML=`<header><div class=logo onclick=home()>CM</div><b class=ttl>Home 🏏</b><nav>${Object.keys(views).filter(t=>t!='Signings'||G.dom).sort((a,b)=>{let p=['Central','Standings','Squad','Calendar','Fixtures','Office'],ai=p.indexOf(a),bi=p.indexOf(b);return (ai<0?99:ai)-(bi<0?99:bi)}).map(t=>`<a class="${G.tab==t?'on':''}" onclick="tab('${t}')">${t}</a>`).join('')}</nav><div class=club><b style="font-size:24px;display:block;line-height:1.15">${G.mn||'Coach'}</b>${flag(G.me,20)}${T[G.me].n}<div onmouseenter="tip(event,'You will play better if the fans like you.')" onmousemove="tip(event,'You will play better if the fans like you.')" onmouseleave="tip()" style="margin-top:6px"><small style="font-size:11px;font-weight:400">Fan reputation</small><i><u style="width:${G.fan??50}%;background:${(G.fan??50)<35?'#e74c3c':(G.fan??50)<65?'#f39c12':'#2ecc71'}"></u></i></div></div></header><main>${views[G.tab]()}</main>`;let nb=$('.wrap');if(nb)nb.scrollTop=wt;window.scrollTo(0,sy);if(fp!=null&&fn!=fp)fanAnim(fp,fn)}
@@ -641,6 +641,7 @@ function poStep(){let po=G.po,sm=(a,b)=>R()<.5+(trt(G.sq[a],'T20')-trt(G.sq[b],'
   po.r[k]={a,b,w:sm(a,b)}}
  if(po.r.fin&&po.r.fin.w)domEnd(po.r.fin.w)}
 function simDomesticAIMatch(a,b,date,round){
+ const fixtureId='ai-'+G.season+'-'+round+'-'+a+'-'+b,G.aiFixtures=G.aiFixtures||[],existing=G.aiFixtures.find(x=>x.id===fixtureId);if(existing&&existing.res)return existing;
  const A=G.sq[a]||[],B=G.sq[b]||[];if(A.length<11||B.length<11)return null;
  const innings=[];
  for(let inn=0;inn<2;inn++){
@@ -649,10 +650,10 @@ function simDomesticAIMatch(a,b,date,round){
    bowlXI=(G.sq[bowl]||[]).slice().sort((x,y)=>((y.r.T20&&y.r.T20[1])||0)-((x.r.T20&&x.r.T20[1])||0)).slice(0,5);
   const batting=batXI.map((p,i)=>{
    const rating=(p.r.T20&&p.r.T20[0])||60,skill=cl(1+(rating-70)*.018,.62,1.48),
-    roleBase=i<4?8:i<7?3:0,
+    roleBase=i<4?8:i<7?5:2,
     duckChance=i<4?.10:i<7?.15:.23,
     exceptional=R()<.045,
-    raw=R()<duckChance?0:exceptional?42+Math.round(Math.pow(R(),.72)*62):Math.round((roleBase+Math.pow(R(),.78)*(i<4?40:i<7?23:14))*skill),
+    raw=R()<duckChance?0:exceptional?38+Math.round(Math.pow(R(),.72)*42):Math.round((roleBase+Math.pow(R(),.78)*(i<4?28:i<7?17:8))*skill),
     runs=cl(raw,0,130),
     srBase=i<4?133:i<7?119:91,
     strikeRate=cl(srBase+(rating-70)*.72+(R()-.5)*(i<4?48:i<7?42:38),55,205),
@@ -674,7 +675,7 @@ function simDomesticAIMatch(a,b,date,round){
  }
  const x=innings[0],y=innings[1],winner=x.r>y.r?a:y.r>x.r?b:null,res=winner?T[winner].n+' won by '+Math.abs(x.r-y.r)+' runs':'Match tied';
  addRes('T20',a,b,winner===a?'a':winner===b?'b':'d');
- const fx={id:'ai-'+G.season+'-'+round+'-'+a+'-'+b,ai:1,round,d:date,a,b,f:'T20',res,w:winner,sc:x.r+'/'+x.w+' · '+y.r+'/'+y.w,innings};
+ const fx={id:fixtureId,ai:1,round,d:date,a,b,f:'T20',res,w:winner,sc:x.r+'/'+x.w+' · '+y.r+'/'+y.w,innings};
  G.aiFixtures=G.aiFixtures||[];let scheduled=G.aiFixtures.find(x=>x.id===fx.id);if(scheduled)Object.assign(scheduled,fx);else G.aiFixtures.push(fx);return fx;
 }
 function simDomRound(round,skipA,skipB){if(!G.dom||!G.aiRounds||!G.aiRounds[round])return;G.aiFixtures=G.aiFixtures||G.aiRounds.flatMap((games,ri)=>games.map(([a,b])=>({id:'ai-'+G.season+'-'+ri+'-'+a+'-'+b,ai:1,round:ri,d:G.fx[ri]?G.fx[ri].d:G.d,a,b,f:'T20',res:null,w:null,sc:null,innings:[]})));G.aiRounds[round].forEach(pair=>{let a=pair[0],b=pair[1];if(a==skipA||a==skipB||b==skipA||b==skipB)return;simDomesticAIMatch(a,b,G.fx[round]?G.fx[round].d:G.d,round);});}
