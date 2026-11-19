@@ -1046,3 +1046,123 @@ const _rulesPopHundred=rulesPop;
 rulesPop=function(n,why){if(G&&G.dl==='HUNDRED'){popup('<b>The Hundred squad rules</b><br><br>Build a 15-player squad through the draft. You can select up to four international players in your playing XI.');return}_rulesPopHundred(n,why)};
 
 </script></body></html>
+
+
+/* MATCHDAY PREVIEW + MATCH-ONLY LINEUP EDITOR */
+const CM27_ROLE_ICONS={
+ B:'<span class="cm27-role-icon" title="Batter">⚔️</span>',
+ W:'<span class="cm27-role-icon" title="Wicketkeeper">🧤</span>',
+ A:'<span class="cm27-role-icon" title="All-rounder">🏏⚾</span>',
+ F:'<span class="cm27-role-icon" title="Fast bowler">🏏</span>',
+ S:'<span class="cm27-role-icon" title="Spinner">🏏</span>'
+};
+const CM27_ROLE_NAMES={B:'Batter',W:'Wicketkeeper',A:'All-rounder',F:'Fast bowler',S:'Spinner'};
+const CM27_TEAM_COLOURS={AUS:'#08764b',ENG:'#174b91',IND:'#1767bd',NZ:'#171717',SA:'#087b58',PAK:'#087b48',SL:'#164a9b',WI:'#7c173b',BAN:'#087c48',ZIM:'#d21d34',AFG:'#1681a0'};
+function cm27FullName(p){return (p&&p.n)||'Unknown player'}
+function cm27Colour(c){return (typeof DCOL!=='undefined'&&DCOL[c]&&DCOL[c][0])||CM27_TEAM_COLOURS[c]||'#513080'}
+function cm27Comp(f){
+ if(G.dom&&DOM[G.dl])return DOM[G.dl].name;
+ if(/ashes/i.test(f.ev))return 'The Ashes';
+ if(/border.?gavaskar/i.test(f.ev))return 'Border-Gavaskar Trophy';
+ if(/world test championship/i.test(f.ev))return 'World Test Championship';
+ if(/world cup/i.test(f.ev))return f.ev;
+ if(/olympic/i.test(f.ev))return 'Olympic Games';
+ return f.ev||'International Cricket';
+}
+function cm27PrepFor(f){
+ if(!G.matchPrep||G.matchPrep.id!==(f.sid+'-'+G.fi)) {
+  const weather=[['Sunny','Clear skies and a dry outfield.'],['Partly cloudy','Cloud cover with a pleasant playing temperature.'],['Overcast','Cloud cover may help the seam bowlers early.'],['Warm','Warm conditions with a quick outfield.'],['Showers nearby','A chance of passing showers during the match.']];
+  const pitches=[
+   ['Flat','Good pace and bounce with a firm, even surface.','bat',-0.06,'No visible cracks'],
+   ['Green','A green surface with fresh grass and seam movement.','bowl',0.07,'Fine grass cover; no major cracking'],
+   ['Dry & Crackly','A dry, cracked surface that should offer grip and turn as the match progresses.','spin',0.05,'Visible dry cracks across the centre'],
+   ['Soft','A softer surface with less pace through the pitch.','soft',0.02,'A few shallow surface marks'],
+   ['Lots of Bounce','A lively deck with extra bounce, especially for fast bowlers.','bounce',0.055,'Firm surface with minimal cracking'],
+   ['Two-Paced','Some deliveries should grip while others come on nicely.','two',0.025,'Uneven wear through the middle'],
+   ['Damp','A slightly damp surface that may help seamers early.','bowl',0.06,'Moist patches; cracks not prominent'],
+   ['Dusty','A worn, dusty pitch with increasing assistance for spin.','spin',0.06,'Dry, dusty cracks and a loose top layer'],
+   ['Balanced','A fair pitch with no major advantage to either side.','balanced',0,'Light wear; mostly intact surface']
+  ];
+  let w=weather[~~(R()*weather.length)],p=pitches[~~(R()*pitches.length)];
+  G.matchPrep={id:f.sid+'-'+G.fi,weather:w[0],weatherDesc:w[1],pitch:{n:p[0],d:p[1],type:p[2],bias:p[3],cracks:p[4]}};
+ }
+ return G.matchPrep;
+}
+function cm27InitialMatchLineups(f){
+ const mine=(G.xi[f.f]||pickXI(G.sq[G.me],f.f,G.me)).slice();
+ const opp=pickXI((G.sq[f.o]||[]),f.f,f.o).slice();
+ const chooseCaptain=(arr,team)=>((G.cap&&G.cap[f.f]&&team===G.me&&arr.some(p=>p.n===G.cap[f.f]))?G.cap[f.f]:(arr.slice().sort((a,b)=>(b.a||0)-(a.a||0))[0]||{}).n);
+ const chooseKeeper=(arr,team)=>((G.wk&&G.wk[f.f]&&team===G.me&&arr.some(p=>p.n===G.wk[f.f]))?G.wk[f.f]:(arr.find(p=>p.t==='W')||{}).n);
+ return {id:f.sid+'-'+G.fi,format:f.f,teams:{
+  me:{code:G.me,xi:mine,cap:chooseCaptain(mine,G.me),wk:chooseKeeper(mine,G.me)},
+  op:{code:f.o,xi:opp,cap:chooseCaptain(opp,f.o),wk:chooseKeeper(opp,f.o)}
+ }};
+}
+function cm27OpenLineups(){let f=G.fx[G.fi];if(!G.matchLineups||G.matchLineups.id!==f.sid+'-'+G.fi)G.matchLineups=cm27InitialMatchLineups(f);G.matchLineupReturn='preview';cm27LineupEditor()}
+function cm27TogglePlayer(side,idx){
+ let f=G.fx[G.fi],q=G.matchLineups.teams[side],pool=G.sq[q.code]||[],p=pool[idx];if(!p)return;
+ let at=q.xi.findIndex(x=>x.n===p.n);
+ if(at>=0){q.xi.splice(at,1);if(q.cap===p.n)q.cap='';if(q.wk===p.n)q.wk='';}
+ else if(p.inj)return toast(p.n+' is injured and cannot play.');
+ else if((p.rf||[]).includes(f.f))return toast(p.n+' has retired from '+f.f+'.');
+ else if(G.dom&&q.code===G.me&&isOS(p.n)&&osN(q.xi)>=OSR[G.dl].xi)return toast('Too many international players in the XI.');
+ else if(q.xi.length>=11)return toast('A team can only have 11 players.');
+ else q.xi.push(p);
+ cm27LineupEditor();
+}
+function cm27SetLeader(side,kind,name){let q=G.matchLineups.teams[side];q[kind]=name;cm27LineupEditor()}
+function cm27LineupPanel(side){
+ const f=G.fx[G.fi],q=G.matchLineups.teams[side],code=q.code,pool=G.sq[code]||[],mine=side==='me',label=DT[code]||T[code]?.n||code;
+ const rows=q.xi.map(p=>'<div class="cm27-player"><span class="cm27-role">'+(CM27_ROLE_ICONS[p.t]||'🏏')+'</span><span class="cm27-player-name">'+cm27FullName(p)+'</span><span class="cm27-role-name">'+(CM27_ROLE_NAMES[p.t]||'Player')+'</span><span class="cm27-leaders">'+(q.cap===p.n?'<b class="cm27-tag">C</b>':'')+(q.wk===p.n?'<b class="cm27-tag wk">WK</b>':'')+'</span></div>').join('');
+ return '<section class="cm27-team"><div class="cm27-team-head" style="background:'+cm27Colour(code)+'">'+flag(code,38)+'<b>'+label+'</b><small>'+q.xi.length+'/11 selected</small></div><div class="cm27-selected">'+(rows||'<p class="cm27-empty">No players selected</p>')+'</div><div class="cm27-picklist"><b>Squad selection</b>'+pool.map((p,i)=>'<button class="cm27-pick '+(q.xi.some(x=>x.n===p.n)?'chosen':'')+'" onclick="cm27TogglePlayer(\''+side+'\','+i+')"><span>'+(CM27_ROLE_ICONS[p.t]||'🏏')+'</span><span>'+cm27FullName(p)+'</span><small>'+(CM27_ROLE_NAMES[p.t]||'Player')+'</small><span>'+(q.xi.some(x=>x.n===p.n)?'✓':'+')+'</span></button>').join('')+'</div><div class="cm27-leader-controls"><label>Captain <select onchange="cm27SetLeader(\''+side+'\',\'cap\',this.value)"><option value="">Choose captain</option>'+q.xi.map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'" '+(q.cap===p.n?'selected':'')+'>'+cm27FullName(p)+'</option>').join('')+'</select></label><label>Wicketkeeper <select onchange="cm27SetLeader(\''+side+'\',\'wk\',this.value)"><option value="">Choose keeper</option>'+q.xi.filter(p=>p.t==='W').map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'" '+(q.wk===p.n?'selected':'')+'>'+cm27FullName(p)+'</option>').join('')+'</select></label></div></section>';
+}
+function cm27LineupEditor(){
+ const f=G.fx[G.fi],m=G.matchLineups.teams.me,o=G.matchLineups.teams.op;
+ const valid=q=>q.xi.length===11&&q.cap&&q.xi.some(p=>p.n===q.cap)&&q.wk&&q.xi.some(p=>p.n===q.wk)&&q.xi.some(p=>p.n===q.wk&&p.t==='W');
+ const ok=valid(m)&&valid(o);
+ $('#app').innerHTML='<main class="cm27-page"><h1>Cricket Manager 2027</h1><h2>Edit Match Lineups</h2><p class="cm27-sub">'+f.f+' · '+cm27Comp(f)+'</p><div class="cm27-lineup-grid">'+cm27LineupPanel('me')+cm27LineupPanel('op')+'</div><p class="cm27-note">Changes apply to this match only. Your saved squad and regular lineups will not be changed.</p><p class="cm27-actions"><button class="btn" onclick="cm27MatchPreview()">← Back to Match Preview</button><button class="go" '+(ok?'':'disabled')+' onclick="cm27MatchPreview()">Confirm Lineups</button></p>'+(ok?'':'<p class="cm27-warning">Each team needs exactly 11 players, one captain and a selected wicketkeeper with the wicketkeeper role.</p>')+'</main>';
+}
+function cm27MatchPreview(){
+ const f=G.fx[G.fi],p=cm27PrepFor(f),l=G.matchLineups||(G.matchLineups=cm27InitialMatchLineups(f));
+ const roleLine=(q)=>q.xi.map(x=>'<div class="cm27-preview-player"><span>'+(CM27_ROLE_ICONS[x.t]||'🏏')+'</span><b>'+cm27FullName(x)+'</b><small>'+(CM27_ROLE_NAMES[x.t]||'Player')+(q.cap===x.n?' · Captain':'')+(q.wk===x.n?' · WK':'')+'</small></div>').join('');
+ const teamCard=(side)=>{let q=l.teams[side],c=q.code;return '<section class="cm27-preview-team"><div class="cm27-preview-head" style="background:'+cm27Colour(c)+'">'+flag(c,42)+'<b>'+(DT[c]||T[c]?.n||c)+'</b></div><div class="cm27-preview-list">'+roleLine(q)+'</div></section>'};
+ $('#app').innerHTML='<main class="cm27-page"><div class="cm27-brand">CRICKET MANAGER 2027</div><div class="cm27-match-type">'+f.f.toUpperCase()+'</div><div class="cm27-competition">'+clg(f.ev,76)+'<h2>'+cm27Comp(f)+'</h2><p>'+f.ev+'</p></div><div class="cm27-conditions"><div><b>WEATHER</b><strong>'+p.weather+'</strong><small>'+p.weatherDesc+'</small></div><div><b>PITCH</b><strong>'+p.pitch.n+'</strong><small>'+p.pitch.d+'</small><small>Surface: '+p.pitch.cracks+'</small></div><div><b>VENUE</b><strong>'+venueFor(f)+'</strong><small>'+dt(f.d)+'</small></div></div><div class="cm27-preview-grid">'+teamCard('me')+teamCard('op')+'</div><div class="cm27-preview-actions"><button class="go" onclick="cm27StartPreparedMatch()">Start Match</button><button class="btn" onclick="cm27OpenLineups()">Edit Lineups</button></div></main>';
+}
+function cm27StartPreparedMatch(){
+ const f=G.fx[G.fi],l=G.matchLineups||(G.matchLineups=cm27InitialMatchLineups(f)),m=l.teams.me,o=l.teams.op;
+ const valid=q=>q.xi.length===11&&q.cap&&q.xi.some(p=>p.n===q.cap)&&q.wk&&q.xi.some(p=>p.n===q.wk&&p.t==='W');
+ if(!valid(m)||!valid(o))return toast('Both teams need 11 players, a captain and a wicketkeeper.');
+ const old={xi:G.xi[f.f],cap:G.cap&&G.cap[f.f],wk:G.wk&&G.wk[f.f]};
+ G.xi[f.f]=m.xi.slice();G.cap=G.cap||{};G.wk=G.wk||{};G.cap[f.f]=m.cap;G.wk[f.f]=m.wk;
+ const oldRandom=Math.random;
+ try{
+  _cm27StartMatchOriginal();
+  if(M&&!M.closed){
+   M.matchOnly=true;M.matchCaptain=m.cap;M.matchKeeper=m.wk;M.matchOpponentCaptain=o.cap;M.matchOpponentKeeper=o.wk;
+   M.op=o.xi.slice();M.pitch={...G.matchPrep.pitch};
+   M.preMatchLineups=l;
+  }
+ }finally{
+  G.xi[f.f]=old.xi;
+  if(old.cap===undefined)delete G.cap[f.f];else G.cap[f.f]=old.cap;
+  if(old.wk===undefined)delete G.wk[f.f];else G.wk[f.f]=old.wk;
+ }
+}
+const _cm27StartMatchOriginal=startMatch;
+startMatch=function(){let f=G&&G.fx&&G.fx[G.fi];if(f&&G.d>=f.d){G.matchLineups=cm27InitialMatchLineups(f);cm27PrepFor(f);cm27MatchPreview();return}return _cm27StartMatchOriginal()};
+const _cm27MrenderOriginal=mrender;
+mrender=function(){if(M&&M.closed&&M.matchOnly){M.matchOnly=false;G.matchPrep=null;G.matchLineups=null}return _cm27MrenderOriginal()};
+views.Central=function(){let html=Central?null:null;return (function(){
+ const f=G.fx[G.fi],r=G.dom?rk('T20'):(f.f==='Test'?rk('Test'):C.slice().sort((a,b)=>trt(G.sq[b],f.f)-trt(G.sq[a],f.f))),md=G.d>=f.d,d=dt(G.d),dd=G.an?'<h1 class=od>'+dt(G.od)+'</h1><h1 class=nd>'+d+'</h1>':'<h1>'+d+'</h1>';G.an=0;
+ const tm=c=>'<div class=tmc><div class=p>'+ord(r.indexOf(c)+1).toUpperCase()+'</div>'+flag(c,130)+'<b>'+T[c].n+'</b></div>';
+ let up='';for(let j=G.fi;j<Math.min(G.fi+5,G.fx.length);j++){let g=G.fx[j];if(j>G.fi)up+='<div class=nx><small>'+new Date(g.d).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase()+'</small>'+flag(g.o,64)+'<b>'+T[g.o].n+'</b><em>'+g.f+'</em></div>'}
+ return '<section class=l><div class=d id=dt>'+dd+'</div><small>Match '+(G.fi+1)+' of '+G.fx.length+' · Season '+G.season+'</small><div class=row>'+clg(f.ev,38)+f.ev+' <em>'+(f.ko?f.f+' · '+f.ko:f.f+' '+f.g+' of '+f.n)+'</em><br><em>'+venueFor(f)+'</em><br><em>'+sl()+'</em></div><div class=cv>'+tm(G.me)+'<span class=v>v</span>'+tm(f.o)+'</div>'+(md?'<button class=go onclick=startMatch()>Match Day</button>':'<button class=go onclick=simDay()>Simulate</button>')+'<h3 style="margin:22px 0 8px">Upcoming Series / Games</h3><div class="seriesgrid">'+(()=>{let seen=new Set(),cards='';for(let j=G.fi;j<G.fx.length&&seen.size<4;j++){let g=G.fx[j];if(seen.has(g.sid))continue;seen.add(g.sid);let series=G.fx.filter(x=>x.sid===g.sid),start=Math.min(...series.map(x=>x.d)),end=Math.max(...series.map(x=>x.d)),fmtDate=x=>new Date(x).toLocaleDateString('en-AU',{month:'short',day:'numeric'}),date=fmtDate(start)+(new Date(start).getMonth()===new Date(end).getMonth()?'–':' – ')+fmtDate(end);cards+='<div class="seriescard"><small>'+date+'</small><div class="serieslogo">'+(/ashes/i.test(g.ev)?clg(g.ev,58):flag(g.o,58))+'</div><b>'+T[g.o].n+'</b><em>'+g.ev+'</em></div>'}return cards||'<em>No upcoming series</em>'})()+'</div></section><aside class=card><div id=nw>'+ncard(G.news[G.nw])+'</div></aside>';
+ })()};
+(function(){const css=`
+.cm27-page{width:100%;max-width:1180px;margin:0 auto;padding:24px;background:linear-gradient(145deg,#101a23,#172d37 55%,#0b1119);border:1px solid #ffffff24;border-radius:16px;box-shadow:0 16px 40px #0008;color:#fff}
+.cm27-brand{text-align:center;font-size:clamp(24px,4vw,38px);font-weight:950;letter-spacing:2px}.cm27-match-type{text-align:center;font-size:24px;font-weight:850;margin:10px 0 18px}.cm27-competition{text-align:center;margin:0 auto 18px}.cm27-competition h2{margin:8px 0 3px}.cm27-competition p,.cm27-sub{opacity:.72;margin:4px 0 18px}
+.cm27-conditions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.cm27-conditions>div{background:#ffffff10;border:1px solid #ffffff22;border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:5px}.cm27-conditions b{font-size:11px;letter-spacing:1.4px;opacity:.65}.cm27-conditions strong{font-size:17px}.cm27-conditions small{line-height:1.35}
+.cm27-preview-grid,.cm27-lineup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.cm27-preview-team,.cm27-team{background:#eef1f3;color:#17202a;border-radius:10px;overflow:hidden;min-width:0}.cm27-preview-head,.cm27-team-head{display:flex;align-items:center;gap:10px;padding:11px 13px;color:#fff}.cm27-preview-head b,.cm27-team-head b{flex:1}.cm27-preview-list{padding:8px 12px}.cm27-preview-player{display:grid;grid-template-columns:28px 1fr;gap:2px 8px;align-items:center;padding:7px 3px;border-bottom:1px solid #17202a18;color:#17202a}.cm27-preview-player>span{grid-row:span 2;font-size:19px}.cm27-preview-player b{font-size:13px}.cm27-preview-player small{font-size:11px;color:#56616d}
+.cm27-preview-actions{display:flex;justify-content:center;gap:14px;margin:22px 0 4px;flex-wrap:wrap}.cm27-preview-actions button{min-width:180px;border-radius:8px}.cm27-lineup-grid{align-items:start}.cm27-team-head small{font-size:12px}.cm27-selected{padding:8px 10px}.cm27-player{display:grid;grid-template-columns:28px minmax(0,1fr) auto auto;gap:7px;align-items:center;padding:7px 2px;border-bottom:1px solid #18243118;font-size:12px}.cm27-role-icon{font-size:18px}.cm27-player-name{font-weight:700}.cm27-role-name{font-size:10px;color:#65717d}.cm27-tag{font-size:10px;padding:3px 5px;border-radius:4px;background:#1f6c43;color:#fff}.cm27-tag.wk{background:#344e86}.cm27-picklist{padding:8px 10px;border-top:1px solid #18243122}.cm27-picklist>b{display:block;margin:3px 0 8px}.cm27-pick{display:grid;grid-template-columns:25px minmax(0,1fr) auto 18px;gap:6px;align-items:center;width:100%;text-align:left;color:#17202a;background:#fff;border:1px solid #d8dde2;border-radius:6px;padding:7px;margin:4px 0;font-size:12px}.cm27-pick small{color:#65717d}.cm27-pick.chosen{background:#dff2e6;border-color:#399b61}.cm27-leader-controls{padding:10px;display:grid;gap:8px}.cm27-leader-controls label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700}.cm27-leader-controls select{background:#fff;color:#17202a;margin:0}.cm27-note,.cm27-warning{text-align:center;font-size:13px}.cm27-note{opacity:.72;margin:14px 0}.cm27-warning{color:#ffb6a9}.cm27-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.cm27-empty{padding:12px;color:#667}.cm27-role{font-size:18px}
+@media(max-width:760px){.cm27-page{padding:14px 10px}.cm27-preview-grid,.cm27-lineup-grid{grid-template-columns:1fr}.cm27-conditions{grid-template-columns:1fr}.cm27-player{grid-template-columns:25px minmax(0,1fr) auto}.cm27-role-name{display:none}.cm27-preview-actions button{width:100%}}
+`;const st=document.createElement('style');st.textContent=css;document.head.appendChild(st)})();
