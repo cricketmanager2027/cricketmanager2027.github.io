@@ -302,25 +302,41 @@ function aiCal(){return []}
 function simAIRound(f,opp,baseFx){let busy=new Set();(G.fx||[]).forEach(x=>{if(x===baseFx)return;if(x.d&&baseFx.d&&Math.abs(x.d-baseFx.d)<=2*864e5){busy.add(x.o);busy.add(G.me)}});let teams=C.filter(k=>k!=G.me&&k!=opp&&!busy.has(k)),used=new Set(),made=[],sid=G.sid++;teams.sort(()=>R()-.5);for(let i=0;i<teams.length;i++){let a=teams[i];if(used.has(a))continue;let candidates=teams.filter(b=>b!=a&&!used.has(b));if(!candidates.length)continue;let b=candidates[~~(R()*candidates.length)];used.add(a);used.add(b);let key=[a,b].sort()+'',ev=TR[key]&&f=='Test'?TR[key]+' '+G.yr:TRo[key]&&f=='ODI'?TRo[key]+' '+G.yr:T[a].n+' v '+T[b].n+' '+(f=='Test'?'Test':f+'I')+' '+G.yr,e={f,a,b,g:1,n:1,sid:sid++,ev,res:null,p:0,d:baseFx.d,ai:1};made.push(e);G.cal.push(e);simCal(e)}return made}
 function simAIPlayerStats(f,a,b){
  let A=G.sq[a]||[],B=G.sq[b]||[];if(A.length<11||B.length<11)return;
- let bats=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][0])||0)-((x.r[f]&&x.r[f][0])||0)),
+ const bats=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][0])||0)-((x.r[f]&&x.r[f][0])||0)),
  bowls=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][1])||0)-((x.r[f]&&x.r[f][1])||0)).slice(0,6),
- innings=f=='Test'?4:2,best=null;
+ innings=f=='Test'?4:2;
+ let best=null;
  for(let inn=0;inn<innings;inn++){
-  let bt=inn%2?A:B,bo=inn%2?B:A,team=bt==A?a:b,opponent=bo==A?a:b,
+  let bt=inn%2?A:B,bo=inn%2?B:A,team=bt==A?a:b,opponent=bo==A?b:a,
    order=bats(bt).slice(0,10),bowlers=bowls(bo),
-   total=f=='Test'?205+~~(R()*126):f=='ODI'?205+~~(R()*91):140+~~(R()*56),
-   weights=order.map((p,i)=>Math.max(.25,((p.r[f]&&p.r[f][0])||65)/80*(i<4?1.12:i<7?.95:.62))*(.78+R()*.44)),
+   total=f=='Test'?170+~~(R()*111):f=='ODI'?205+~~(R()*81):135+~~(R()*56),
+   weights=order.map((p,i)=>Math.max(.12,((p.r[f]&&p.r[f][0])||65)/80*(i<3?1.35:i<6?.95:.48))*(.72+R()*.56)),
    weightSum=weights.reduce((x,y)=>x+y,0),left=total;
+  // Give each batter an individual innings, with realistic low scores and occasional substantial contributions.
+  let scores=order.map((p,i)=>{
+   let rating=(p.r[f]&&p.r[f][0])||65,share=Math.round(total*weights[i]/weightSum);
+   if(i>=6&&R()<.48)share=~~(R()*15);
+   else if(i>=3&&R()<.25)share=~~(R()*25);
+   else if(i<3&&R()<.12)share=~~(R()*9);
+   let cap=f=='Test'?Math.round(42+(rating-65)*.75+R()*48):f=='ODI'?Math.round(38+(rating-65)*.9+R()*38):Math.round(32+(rating-65)*.85+R()*30);
+   share=Math.max(0,Math.min(share,cap));
+   return share;
+  });
+  // Reconcile the innings total with batter scores while keeping the scorecard plausible.
+  let sum=scores.reduce((x,y)=>x+y,0);
+  if(sum<total){
+   let eligible=[0,1,2,3,4,5].sort(()=>R()-.5);
+   for(let idx of eligible){if(sum>=total)break;let room=(f=='Test'?125:100)-scores[idx],add=Math.min(total-sum,Math.max(0,room));scores[idx]+=add;sum+=add}
+  }else if(sum>total){
+   let excess=sum-total;
+   for(let idx=scores.length-1;idx>=0&&excess>0;idx--){let take=Math.min(excess,scores[idx]);scores[idx]-=take;excess-=take}
+  }
   order.forEach((p,i)=>{
-   let share=i==order.length-1?left:Math.min(left,Math.max(0,Math.round(total*weights[i]/weightSum)));
-   left-=share;
-   let rating=(p.r[f]&&p.r[f][0])||65,
-    targetSR=f=='Test'?cl(43+(rating-70)*.22+(R()-.5)*12,32,62):f=='ODI'?cl(79+(rating-70)*.3+(R()-.5)*18,60,105):cl(128+(rating-70)*.45+(R()-.5)*28,95,175),
+   let share=scores[i],rating=(p.r[f]&&p.r[f][0])||65,
+    targetSR=f=='Test'?cl(40+(rating-70)*.22+(R()-.5)*12,30,58):f=='ODI'?cl(76+(rating-70)*.3+(R()-.5)*16,58,100):cl(122+(rating-70)*.4+(R()-.5)*22,90,155),
     balls=share?Math.max(1,Math.round(share*100/targetSR)):Math.max(1,~~(R()*8)+1),
     z=statPlayer(f,p.n,team);
-   z.runs+=share;z.balls+=balls;
-   z.sixes+=Math.min(Math.floor(share/18),Math.floor(share*(f=='Test'?.025:f=='ODI'?.055:.105)));
-   z.high=Math.max(z.high,share);
+   z.runs+=share;z.balls+=balls;z.sixes+=Math.min(Math.floor(share/18),Math.floor(share*(f=='Test'?.025:f=='ODI'?.055:.105)));z.high=Math.max(z.high,share);
    if(!best||share>best.r)best={n:p.n,t:team,r:share};
   });
   let wk=0;
