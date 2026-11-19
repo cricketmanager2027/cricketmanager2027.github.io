@@ -962,6 +962,9 @@ function lowpoly(){let W=1600,H=900,c=9,r=6,pts=[];for(let j=0;j<=r;j++)for(let 
  let d=document.createElement('div');d.className='lp';d.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="margin:0;border-radius:0">${t}</svg>`;document.body.prepend(d)}
 try{lowpoly()}catch(e){}
 
+// Render the main menu before optional competition extensions initialise.
+start();
+
 /* HUNDRED_DRAFT_PATCH */
 const BASE_TEAM_CODES=C.slice();
 const HUNDRED_CODES=['HUN_BPH','HUN_LSP','HUN_MSG','HUN_MIL','HUN_SOB','HUN_SRL','HUN_WFI','HUN_TRR'];
@@ -1035,5 +1038,4 @@ function finishHundredDraft(){
 const _rulesPopHundred=rulesPop;
 rulesPop=function(n,why){if(G&&G.dl==='HUNDRED'){popup('<b>The Hundred squad rules</b><br><br>Build a 15-player squad through the draft. You can select up to four international players in your playing XI.');return}_rulesPopHundred(n,why)};
 
-start();
 </script></body></html>
