@@ -641,7 +641,7 @@ function poStep(){let po=G.po,sm=(a,b)=>R()<.5+(trt(G.sq[a],'T20')-trt(G.sq[b],'
   po.r[k]={a,b,w:sm(a,b)}}
  if(po.r.fin&&po.r.fin.w)domEnd(po.r.fin.w)}
 function simDomesticAIMatch(a,b,date,round){
- const fixtureId='ai-'+G.season+'-'+round+'-'+a+'-'+b,G.aiFixtures=G.aiFixtures||[],existing=G.aiFixtures.find(x=>x.id===fixtureId);if(existing&&existing.res)return existing;
+ const fixtureId='ai-'+G.season+'-'+round+'-'+a+'-'+b;G.aiFixtures=G.aiFixtures||[];const existing=G.aiFixtures.find(x=>x.id===fixtureId);if(existing&&existing.res)return existing;
  const A=G.sq[a]||[],B=G.sq[b]||[];if(A.length<11||B.length<11)return null;
  const innings=[];
  for(let inn=0;inn<2;inn++){
