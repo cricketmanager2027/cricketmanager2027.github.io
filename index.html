@@ -79,6 +79,13 @@ table{border-collapse:collapse;width:100%}th,td{padding:8px 10px;text-align:left
 @media(max-width:520px){.fixturesPage{padding:12px}.fixtureStatsGrid{grid-template-columns:1fr}.fixtureStatsGrid>div+div{border-left:0;border-top:1px solid #ffffff26;padding:12px 0 0}.fixtureMatchBanner{gap:5px;padding:12px 7px}.fixtureTeam{font-size:11px;gap:4px}.fixtureTeam img{width:28px;height:28px}.fixtureResult strong{font-size:17px}}
 </style></head><body><svg class="logoFlatDef" aria-hidden="true"><defs><filter id="logoFlat" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceGraphic" stdDeviation=".22" result="soft"/><feComponentTransfer in="soft"><feFuncR type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncG type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncB type="discrete" tableValues=".05 .28 .55 .78 1"/></feComponentTransfer></filter></defs></svg><div id="app"></div><div id="prebeta-global">Pre-beta version — may have bugs or be unstable</div>
 <script>
+window.onerror=function(message,source,line,column,error){
+ try{var app=document.getElementById('app');if(app){app.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;padding:24px"><section style="max-width:680px;background:#210d3d;border:1px solid #ff7777;border-radius:14px;padding:22px;color:#fff"><h2 style="margin-top:0">Game startup error</h2><p>The game hit an error before it could load. Please send this message to support:</p><pre style="white-space:pre-wrap;overflow-wrap:anywhere;color:#ffd0d0">'+String(message)+'\\nLine: '+line+':'+column+(error&&error.stack?'\\n'+error.stack:'')+'</pre></section></main>'}}catch(e){};return false;
+};
+window.addEventListener('unhandledrejection',function(event){
+ try{var app=document.getElementById('app');if(app){var reason=event.reason;app.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;padding:24px"><section style="max-width:680px;background:#210d3d;border:1px solid #ff7777;border-radius:14px;padding:22px;color:#fff"><h2 style="margin-top:0">Game startup error</h2><p>Unhandled promise rejection:</p><pre style="white-space:pre-wrap;overflow-wrap:anywhere;color:#ffd0d0">'+String(reason&&reason.stack||reason)+'</pre></section></main>'}}catch(e){}
+});
+
 const T={
 IND:{n:'India',b:78,p:'Y Jaiswal B,KL Rahul B,S Gill B,R Pant W,R Jadeja A,H Pandya A,S Yadav B,R Gaikwad B,S Samson W,R Patidar B,Shreyas Iyer B,Axar Patel A,Kuldeep Yadav S,J Bumrah F,M Siraj F,Arshdeep Singh F,M Shami F'},
 AUS:{n:'Australia',b:80,p:'T Head B,M Labuschagne B,S Smith B,C Green A,A Carey W,M Marsh A,B Webster A,P Cummins F,M Starc F,N Lyon S,S Boland F,J Hazlewood F,J Inglis W,N Ellis F,X Bartlett F,J Richardson F,S Konstas B,M Renshaw B,A Hardie A,T Murphy S,A Zampa S,N Maddinson B'},
