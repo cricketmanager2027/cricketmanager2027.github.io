@@ -77,7 +77,51 @@ table{border-collapse:collapse;width:100%}th,td{padding:8px 10px;text-align:left
 .fixtureStatsGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:12px}.fixtureStatsGrid>div+div{border-left:1px solid #ffffff26;padding-left:14px}.fixtureStatsGrid h4{margin:0 0 8px;font-size:14px}.fixtureStatsGrid table{width:100%;font-size:12px}.fixtureStatsGrid th{font-size:10px;opacity:.6;text-align:left}.fixtureStatsGrid th:not(:first-child),.fixtureStatsGrid td:not(:first-child){text-align:right}.fixtureStatsGrid td,.fixtureStatsGrid th{padding:6px 4px;border-bottom:1px solid #ffffff15}.fixtureStatsGrid tr:last-child td{border-bottom:0}.fixtureEmpty{padding:28px 18px;border:1px dashed #9874c0;border-radius:12px;text-align:center;opacity:.75}
 @media(max-width:900px){.fixturesLayout{grid-template-columns:1fr}.fixtureDetail{order:2}.fixtureList{order:1}}
 @media(max-width:520px){.fixturesPage{padding:12px}.fixtureStatsGrid{grid-template-columns:1fr}.fixtureStatsGrid>div+div{border-left:0;border-top:1px solid #ffffff26;padding:12px 0 0}.fixtureMatchBanner{gap:5px;padding:12px 7px}.fixtureTeam{font-size:11px;gap:4px}.fixtureTeam img{width:28px;height:28px}.fixtureResult strong{font-size:17px}}
-</style><style id="cm27-role-icons-fix">.cm27-role-icon{width:22px;height:22px;border-radius:50%;background:#101316;display:inline-flex;align-items:center;justify-content:center;flex:none;box-shadow:0 1px 2px #0005}.cm27-role-icon svg{width:17px;height:17px;display:block}.cm27-role-svg{display:none!important}</style></head><body><svg class="logoFlatDef" aria-hidden="true"><defs><filter id="logoFlat" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceGraphic" stdDeviation=".22" result="soft"/><feComponentTransfer in="soft"><feFuncR type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncG type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncB type="discrete" tableValues=".05 .28 .55 .78 1"/></feComponentTransfer></filter></defs></svg><div id="app"></div><div id="prebeta-global">Pre-beta version — may have bugs or be unstable</div>
+</style><style id="cm27-role-icons-fix">
+.cm27-page{background:radial-gradient(ellipse at 50% 0%,#51218b 0%,#291044 42%,#12091f 100%)!important;color:#fff!important;border:1px solid #9b63dc55!important;max-width:1600px!important}
+.cm27-brand,.cm27-page h1,.cm27-page h2{color:#fff!important;text-align:center}
+.cm27-match-centre{background:#ffffff09;border:1px solid #ffffff20;border-radius:14px;padding:20px 16px;box-shadow:0 8px 28px #08001455}
+.cm27-competition{color:#fff}.cm27-competition h2{color:#fff!important}
+.cm27-centre-teams{border-color:#ffffff40}
+.cm27-conditions>div{background:#ffffff12!important;border-color:#ffffff25!important}
+.cm27-preview-team,.cm27-team{background:#f0edf5!important;color:#21172d!important;border:1px solid #c9b5df;box-shadow:0 7px 24px #09001466}
+.cm27-preview-head,.cm27-team-head{color:#fff!important}
+.cm27-preview-list,.cm27-selected{background:#f0edf5}
+.cm27-preview-player,.cm27-player{color:#21172d!important;border-bottom-color:#d7cadd!important}
+.cm27-preview-player small,.cm27-role-name{color:#675777!important}
+.cm27-picklist{background:#e8e0ef!important;color:#251632!important}
+.cm27-pick{background:#fff!important;color:#251632!important;border-color:#d0c3dc!important;min-height:42px}
+.cm27-pick.chosen{background:#e7d9f7!important;border-color:#8751bd!important}
+.cm27-leader-controls{background:#e8e0ef!important;color:#251632!important}
+.cm27-leader-controls select{min-height:42px;border:1px solid #b9a5ca;border-radius:6px;padding:8px}
+.cm27-preview-actions button,.cm27-actions button{background:#09070d!important;color:#fff!important;border:2px solid #fff!important;border-radius:5px!important;min-height:48px;font-weight:900}
+.cm27-lineup-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)!important;align-items:start}
+.cm27-order{display:flex;gap:4px;grid-column:1/-1;justify-content:flex-end}
+.cm27-order button{width:30px;height:28px;border-radius:5px;border:1px solid #a58ab8;background:#fff;color:#32184b;font-size:17px;font-weight:900;line-height:1}
+.cm27-order button:disabled{opacity:.25}
+.cm27-readonly{font-size:11px;text-align:center;color:#675777;padding:0 8px 8px;margin:0}
+.cm27-player{grid-template-columns:25px minmax(0,1fr) auto auto;gap:6px;padding:7px 3px}
+.cm27-role-icon{background:#101316!important}
+.cm27-note{color:#eee0ff}.cm27-warning{color:#ffc0bd}
+@media(max-width:760px){
+ .cm27-page{padding:13px 9px!important;border-radius:10px!important}
+ .cm27-brand{font-size:25px!important;letter-spacing:1px!important;margin-bottom:15px!important}
+ .cm27-match-layout{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important}
+ .cm27-match-centre{order:0;width:auto;padding:14px 10px!important}
+ .cm27-preview-team{width:100%;order:1}
+ .cm27-preview-team:last-child{order:2}
+ .cm27-lineup-grid{display:flex!important;flex-direction:column!important;gap:12px!important}
+ .cm27-lineup-grid>.cm27-team{width:100%;min-width:0}
+ .cm27-player{grid-template-columns:24px minmax(0,1fr) auto!important}
+ .cm27-role-name{display:none}
+ .cm27-pick{grid-template-columns:25px minmax(0,1fr) auto 18px!important}
+ .cm27-centre-teams{gap:5px}
+ .cm27-centre-teams b{font-size:12px}
+ .cm27-conditions{grid-template-columns:1fr!important}
+ .cm27-preview-actions{width:100%}
+ .cm27-preview-actions button{width:100%;min-height:48px}
+}
+</style></head><body><svg class="logoFlatDef" aria-hidden="true"><defs><filter id="logoFlat" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceGraphic" stdDeviation=".22" result="soft"/><feComponentTransfer in="soft"><feFuncR type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncG type="discrete" tableValues=".05 .28 .55 .78 1"/><feFuncB type="discrete" tableValues=".05 .28 .55 .78 1"/></feComponentTransfer></filter></defs></svg><div id="app"></div><div id="prebeta-global">Pre-beta version — may have bugs or be unstable</div>
 <script>
 window.onerror=function(message,source,line,column,error){
  try{var app=document.getElementById('app');if(app){app.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;padding:24px"><section style="max-width:680px;background:#210d3d;border:1px solid #ff7777;border-radius:14px;padding:22px;color:#fff"><h2 style="margin-top:0">Game startup error</h2><p>The game hit an error before it could load. Please send this message to support:</p><pre style="white-space:pre-wrap;overflow-wrap:anywhere;color:#ffd0d0">'+String(message)+'\\nLine: '+line+':'+column+(error&&error.stack?'\\n'+error.stack:'')+'</pre></section></main>'}}catch(e){};return false;
@@ -1097,7 +1141,8 @@ function cm27InitialMatchLineups(f){
 }
 function cm27OpenLineups(){let f=G.fx[G.fi];if(!G.matchLineups||G.matchLineups.id!==f.sid+'-'+G.fi)G.matchLineups=cm27InitialMatchLineups(f);G.matchLineupReturn='preview';cm27LineupEditor()}
 function cm27TogglePlayer(side,idx){
- let f=G.fx[G.fi],q=G.matchLineups.teams[side],pool=G.sq[q.code]||[],p=pool[idx];if(!p)return;
+ if(side!=='me')return toast('You can only edit your own lineup.');
+ let f=G.fx[G.fi],q=G.matchLineups.teams.me,pool=G.sq[q.code]||[],p=pool[idx];if(!p)return;
  let at=q.xi.findIndex(x=>x.n===p.n);
  if(at>=0){q.xi.splice(at,1);if(q.cap===p.n)q.cap='';if(q.wk===p.n)q.wk='';}
  else if(p.inj)return toast(p.n+' is injured and cannot play.');
@@ -1108,10 +1153,17 @@ function cm27TogglePlayer(side,idx){
  cm27LineupEditor();
 }
 function cm27SetLeader(side,kind,name){let q=G.matchLineups.teams[side];q[kind]=name;cm27LineupEditor()}
+function cm27MovePlayer(index,direction){
+ const q=G.matchLineups.teams.me,to=index+direction;
+ if(!q||to<0||to>=q.xi.length)return;
+ const item=q.xi.splice(index,1)[0];q.xi.splice(to,0,item);cm27LineupEditor();
+}
 function cm27LineupPanel(side){
  const f=G.fx[G.fi],q=G.matchLineups.teams[side],code=q.code,pool=G.sq[code]||[],mine=side==='me',label=DT[code]||T[code]?.n||code;
- const rows=q.xi.map(p=>'<div class="cm27-player"><span class="cm27-role">'+(CM27_ROLE_ICONS[p.t]||CM27_ROLE_ICONS.B)+'</span><span class="cm27-player-name">'+cm27FullName(p)+'</span><span class="cm27-role-name">'+(CM27_ROLE_NAMES[p.t]||'Player')+'</span><span class="cm27-leaders">'+(q.cap===p.n?'<b class="cm27-tag">C</b>':'')+(q.wk===p.n?'<b class="cm27-tag wk">WK</b>':'')+'</span></div>').join('');
- return '<section class="cm27-team"><div class="cm27-team-head" style="background:'+cm27Colour(code)+'">'+flag(code,38)+'<b>'+label+'</b><small>'+q.xi.length+'/11 selected</small></div><div class="cm27-selected">'+(rows||'<p class="cm27-empty">No players selected</p>')+'</div><div class="cm27-picklist"><b>Squad selection</b>'+pool.map((p,i)=>'<button class="cm27-pick '+(q.xi.some(x=>x.n===p.n)?'chosen':'')+'" onclick="cm27TogglePlayer(\''+side+'\','+i+')"><span>'+(CM27_ROLE_ICONS[p.t]||CM27_ROLE_ICONS.B)+'</span><span>'+cm27FullName(p)+'</span><small>'+(CM27_ROLE_NAMES[p.t]||'Player')+'</small><span>'+(q.xi.some(x=>x.n===p.n)?'✓':'+')+'</span></button>').join('')+'</div><div class="cm27-leader-controls"><label>Captain <select onchange="cm27SetLeader(\''+side+'\',\'cap\',this.value)"><option value="">Choose captain</option>'+q.xi.map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'" '+(q.cap===p.n?'selected':'')+'>'+cm27FullName(p)+'</option>').join('')+'</select></label><label>Wicketkeeper <select onchange="cm27SetLeader(\''+side+'\',\'wk\',this.value)"><option value="">Choose keeper</option>'+q.xi.filter(p=>p.t==='W').map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'" '+(q.wk===p.n?'selected':'')+'>'+cm27FullName(p)+'</option>').join('')+'</select></label></div></section>';
+ const rows=q.xi.map((p,i)=>'<div class="cm27-player"><span class="cm27-role">'+(CM27_ROLE_ICONS[p.t]||CM27_ROLE_ICONS.B)+'</span><span class="cm27-player-name">'+cm27FullName(p)+'</span><span class="cm27-role-name">'+(CM27_ROLE_NAMES[p.t]||'Player')+'</span><span class="cm27-leaders">'+(q.cap===p.n?'<b class="cm27-tag">C</b>':'')+(q.wk===p.n?'<b class="cm27-tag wk">WK</b>':'')+'</span>'+(mine?'<span class="cm27-order"><button type="button" aria-label="Move player up" '+(i===0?'disabled':'')+' onclick="cm27MovePlayer('+i+',-1)">↑</button><button type="button" aria-label="Move player down" '+(i===q.xi.length-1?'disabled':'')+' onclick="cm27MovePlayer('+i+',1)">↓</button></span>':'')+'</div>').join('');
+ const head='<div class="cm27-team-head" style="background:'+cm27Colour(code)+'">'+flag(code,38)+'<b>'+label+'</b><small>'+q.xi.length+'/11 selected</small></div>';
+ if(!mine)return '<section class="cm27-team cm27-opponent-panel">'+head+'<div class="cm27-selected">'+(rows||'<p class="cm27-empty">No lineup available</p>')+'</div><p class="cm27-readonly">Opposition lineup · view only</p></section>';
+ return '<section class="cm27-team">'+head+'<div class="cm27-selected">'+(rows||'<p class="cm27-empty">No players selected</p>')+'</div><div class="cm27-picklist"><b>Your squad · Select up to 11</b>'+pool.map((p,i)=>'<button class="cm27-pick '+(q.xi.some(x=>x.n===p.n)?'chosen':'')+'" onclick="cm27TogglePlayer(\'me\','+i+')"><span>'+(CM27_ROLE_ICONS[p.t]||CM27_ROLE_ICONS.B)+'</span><span>'+cm27FullName(p)+'</span><small>'+(CM27_ROLE_NAMES[p.t]||'Player')+'</small><span>'+(q.xi.some(x=>x.n===p.n)?'✓':'+')+'</span></button>').join('')+'</div><div class="cm27-leader-controls"><label>Captain <select onchange="cm27SetLeader(\'me\',\'cap\',this.value)"><option value="">Choose captain</option>'+q.xi.map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'" '+(q.cap===p.n?'selected':'')+'>'+cm27FullName(p)+'</option>').join('')+'</select></label><label>Wicketkeeper <select onchange="cm27SetLeader(\'me\',\'wk\',this.value)"><option value="">Choose keeper</option>'+q.xi.filter(p=>p.t==='W').map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'" '+(q.wk===p.n?'selected':'')+'>'+cm27FullName(p)+'</option>').join('')+'</select></label></div></section>';
 }
 function cm27LineupEditor(){
  const f=G.fx[G.fi],m=G.matchLineups.teams.me,o=G.matchLineups.teams.op;
