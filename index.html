@@ -216,6 +216,44 @@ PBKS:{T20:'S Iyer,P Arya,P Singh,N Wadhera,S Singh,M Stoinis,M Jansen,A Omarzai,
 RCB:{T20:'R Patidar,V Kohli,D Padikkal,P Salt,J Sharma,J Bethell,K Pandya,R Shepherd,T David,J Hazlewood,B Kumar'},
 SRH:{T20:'T Head,A Sharma,I Kishan,H Klaasen,N Reddy,A Verma,L Livingstone,P Cummins,B Carse,H Patel,E Malinga'}
 });
+
+/* 2026/27 lineup refresh: format-specific international XIs and strongest realistic franchise XIs. */
+XT.IND += ',R Sharma B,V Kohli B,A Sharma A,W Sundar A,V Chakaravarthy S';
+XT.ENG += ',E Gay B,J Buttler W,L Dawson A';
+XT.SA += ',H Klaasen W';
+DSQ.SYS += ',T Seifert W';
+Object.assign(DEF,{
+AUS:{Test:'M Renshaw,T Head,M Labuschagne,S Smith,C Green,A Carey,B Webster,P Cummins,M Starc,N Lyon,J Hazlewood',ODI:'T Head,M Marsh,M Renshaw,C Green,J Inglis,O Peake,A Hardie,X Bartlett,S Johnson,A Zampa,J Hazlewood',T20:'T Head,M Marsh,J Inglis,C Green,M Stoinis,T David,C Connolly,N Ellis,X Bartlett,A Zampa,S Johnson'},
+IND:{Test:'Y Jaiswal,KL Rahul,S Gill,Shreyas Iyer,R Pant,N Reddy,R Jadeja,A Patel,J Bumrah,M Siraj,H Rana',ODI:'R Sharma,S Gill,V Kohli,Shreyas Iyer,KL Rahul,A Patel,H Pandya,R Jadeja,Kuldeep Yadav,M Siraj,J Bumrah',T20:'A Sharma,S Samson,S Yadav,T Varma,H Pandya,R Singh,A Patel,W Sundar,V Chakaravarthy,Arshdeep Singh,J Bumrah'},
+ENG:{Test:'Z Crawley,B Duckett,J Bethell,J Root,H Brook,J Smith,W Jacks,G Atkinson,B Carse,J Archer,J Tongue',ODI:'P Salt,T Banton,J Root,H Brook,J Cox,S Curran,W Jacks,L Dawson,J Overton,G Atkinson,J Archer',T20:'P Salt,T Banton,W Jacks,H Brook,J Bethell,L Livingstone,S Curran,J Overton,J Archer,A Rashid,S Mahmood'},
+SA:{Test:'A Markram,T de Zorzi,T Stubbs,T Bavuma,D Bedingham,K Verreynne,W Mulder,M Jansen,K Maharaj,K Rabada,L Ngidi',ODI:'T Bavuma,R Rickelton,R van der Dussen,A Markram,T Stubbs,D Miller,M Jansen,K Maharaj,K Rabada,L Ngidi,T Shamsi',T20:'R Rickelton,R Hendricks,A Markram,T Stubbs,H Klaasen,D Miller,M Jansen,D Ferreira,K Maharaj,K Rabada,O Baartman'},
+NZ:{Test:'T Latham,D Conway,K Williamson,R Ravindra,D Mitchell,T Blundell,G Phillips,M Santner,M Henry,K Jamieson,W ORourke',ODI:'W Young,D Conway,K Williamson,R Ravindra,D Mitchell,G Phillips,M Bracewell,M Santner,M Henry,K Jamieson,B Duffy',T20:'F Allen,W Young,R Ravindra,G Phillips,D Mitchell,M Bracewell,M Santner,M Henry,L Ferguson,I Sodhi,B Duffy'},
+PAK:{Test:'A Shafique,S Ayub,S Masood,B Azam,S Shakeel,M Rizwan,S Ali Agha,A Jamal,S Afridi,N Shah,S Khan',ODI:'S Ayub,F Zaman,B Azam,M Rizwan,S Ali Agha,K Ghulam,S Khan,S Afridi,N Shah,H Rauf,M Hasnain',T20:'S Ayub,F Zaman,B Azam,M Rizwan,S Ali Agha,K Ghulam,S Khan,S Afridi,N Shah,H Rauf,A Abrar'},
+SL:{Test:'P Nissanka,D Chandimal,K Mendis,Ka Mendis,D de Silva,C Asalanka,D Wellalage,M Theekshana,P Jayasuriya,L Kumara,M Pathirana',ODI:'P Nissanka,A Fernando,K Mendis,C Asalanka,D Chandimal,D de Silva,W Hasaranga,D Wellalage,M Theekshana,M Pathirana,D Madushanka',T20:'P Nissanka,K Mendis,A Fernando,Ka Mendis,C Asalanka,D de Silva,W Hasaranga,M Theekshana,M Pathirana,N Thushara,D Madushanka'},
+WI:{Test:'K Brathwaite,M Louis,K Carty,K Hodge,A Athanaze,J Holder,J Da Silva,G Motie,A Joseph,K Roach,J Seales',ODI:'B King,E Lewis,K Carty,S Hope,S Rutherford,S Hetmyer,R Chase,R Shepherd,G Motie,A Joseph,J Seales',T20:'B King,E Lewis,N Pooran,S Hope,R Powell,S Rutherford,R Shepherd,A Hosein,G Motie,A Joseph,S Joseph'},
+BAN:{Test:'S Islam,Z Hasan,N Shanto,M Haque,M Rahim,L Das,M Miraz,T Islam,T Ahmed,H Mahmud,N Rana',ODI:'T Hasan,S Sarkar,N Shanto,T Hridoy,L Das,Mahedi Hasan,M Miraz,R Hossain,T Ahmed,M Rahman,N Rana',T20:'T Hasan,P Emon,L Das,N Shanto,T Hridoy,J Ali,Mahedi Hasan,R Hossain,T Sakib,T Ahmed,M Rahman'},
+// BBL: strongest balanced XIs, with overseas limits and specialist roles considered
+ADS:{T20:'T Head,A Carey,M Short,C Lynn,B Stokes,D Short,T Kelly,J Overton,R Khan,W Agar,H Thornton'},
+BRH:{T20:'U Khawaja,M Labuschagne,M Renshaw,J Peirson,M Neser,X Bartlett,S Johnson,M Kuhnemann,T Curran,J Wildermuth,C Vidler'},
+HBH:{T20:'J Weatherald,B McDermott,M Owen,T David,B Webster,C Jewell,C Anderson,C Jordan,N Ellis,R Meredith,A Zampa'},
+MLR:{T20:'J Fraser-McGurk,J Brown,C Jewell,J Bairstow,M Bracewell,W Sutherland,A Hosein,N Lyon,K Richardson,J Behrendorff,T Rogers'},
+MLS:{T20:'F Allen,S Harper,M Stoinis,H Cartwright,T Murphy,S Boland,H Rauf,U Mir,J Overton,C Kellaway,N Coulter-Nile'},
+PRS:{T20:'J Inglis,Z Crawley,M Marsh,C Green,A Hardie,C Connolly,A Turner,A Agar,J Richardson,J Behrendorff,L Morris'},
+SYS:{T20:'T Seifert,J Philippe,J Vince,S Smith,J Silk,O Davies,H Kerr,J Edwards,S Abbott,B Dwarshuis,J Scott'},
+SYT:{T20:'D Warner,S Konstas,C Bancroft,S Billings,D Sams,C Green,P Cummins,N McAndrew,T Sangha,L Ferguson,M Gilkes'},
+// IPL: strongest realistic combinations, observing the four-overseas-player limit
+CSK:{T20:'R Gaikwad,S Samson,S Dube,MS Dhoni,D Brevis,J Overton,R Jadeja,R Chahar,N Ahmad,M Pathirana,M Henry'},
+DC:{T20:'KL Rahul,P Nissanka,T Stubbs,D Miller,A Porel,A Patel,K Yadav,M Starc,T Natarajan,K Jamieson,M Kumar'},
+GT:{T20:'S Gill,S Sudharsan,J Buttler,G Phillips,R Tewatia,W Sundar,R Khan,K Rabada,M Siraj,P Krishna,S Kishore'},
+KKR:{T20:'A Rahane,Raghuvanshi,Rinku Singh,C Green,Ramandeep Singh,S Narine,A Russell,V Chakaravarthy,H Rana,M Pathirana,V Arora'},
+LSG:{T20:'R Pant,N Pooran,M Marsh,A Markram,A Samad,S Ahmed,W Hasaranga,M Shami,A Khan,M Yadav,M Siddharth'},
+RR:{T20:'Y Jaiswal,S Hetmyer,V Sooryavanshi,D Jurel,D Ferreira,R Jadeja,S Curran,R Parag,J Archer,R Bishnoi,S Sharma'},
+MI:{T20:'R Sharma,S Yadav,T Varma,H Pandya,R Rickelton,N Dhir,M Santner,W Jacks,J Bumrah,T Boult,D Chahar'},
+PBKS:{T20:'S Iyer,P Arya,P Singh,N Wadhera,S Singh,M Stoinis,M Jansen,A Omarzai,A Singh,Y Chahal,X Bartlett'},
+RCB:{T20:'R Patidar,V Kohli,D Padikkal,T David,P Salt,J Sharma,K Pandya,J Bethell,J Hazlewood,B Kumar,Y Dayal'},
+SRH:{T20:'T Head,A Sharma,I Kishan,H Klaasen,N Reddy,A Verma,B Carse,P Cummins,H Patel,E Malinga,Z Ansari'}
+});
+
 const par=k=>k=='AUS,ENG'?1:k=='AUS,IND'?1:hs(k)%2;
 const avg=v=>v.reduce((x,y)=>x+y,0)/v.length,SQ0={};
 const SN={IND:'Nair,Mehta,Pandey,Bhat,Rawat,Kulkarni,Das,Joshi',AUS:'Walker,Hughes,Pearce,Hogan,Neill,Barnes,Doyle,Bright',ENG:'Clarke,Hartley,Wood,Fisher,Bell,Rhodes,Dawson,Pratt',SA:'Naidoo,Pretorius,Smit,Mokoena,Coetzee,Botha,Pillay,Adams',NZ:'Henare,Tuhi,Cooper,Shaw,Mills,Hay,Ngata,Cole',PAK:'Qureshi,Malik,Hussain,Iqbal,Baig,Naqvi,Rana,Chaudhry',SL:'Perera,Silva,Dias,Kumara,Bandara,Rajapaksa,Samaraweera,Gunathilaka',WI:'Phillip,Charles,Alleyne,Bonner,Hinds,Lewis,Walcott,Roach',BAN:'Ahmed,Karim,Uddin,Chowdhury,Sarker,Mia,Biswas,Talukdar',ZIM:'Moyo,Ncube,Dube,Sibanda,Mutasa,Chigumba,Mhlanga,Banda'};
