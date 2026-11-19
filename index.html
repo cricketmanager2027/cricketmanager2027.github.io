@@ -1247,8 +1247,8 @@ views.Central=function(){let html=Central?null:null;return (function(){
 /* Keep the temporary XI active through the match so keeper selection is respected. */
 cm27StartPreparedMatch=function(){
  const f=G.fx[G.fi],l=G.matchLineups||(G.matchLineups=cm27InitialMatchLineups(f)),m=l.teams.me,o=l.teams.op;
- const valid=q=>q.xi.length===11&&q.cap&&q.xi.some(p=>p.n===q.cap)&&q.wk&&q.xi.some(p=>p.n===q.wk&&p.t==='W');
- if(!valid(m)||!valid(o))return toast('Both teams need 11 players, a captain and a wicketkeeper.');
+ const valid=(q,side)=>q.xi.length===11&&q.cap&&q.xi.some(p=>p.n===q.cap)&&q.wk&&q.xi.some(p=>p.n===q.wk)&&(side==='op'||q.xi.some(p=>p.n===q.wk&&p.t==='W'));
+ if(!valid(m,'me')||!valid(o,'op'))return toast('Your team needs 11 players, a captain and a selected wicketkeeper.');
  const old={xi:G.xi[f.f],cap:G.cap&&G.cap[f.f],wk:G.wk&&G.wk[f.f]};
  G.xi[f.f]=m.xi.slice();G.cap=G.cap||{};G.wk=G.wk||{};G.cap[f.f]=m.cap;G.wk[f.f]=m.wk;
  let started=false;
