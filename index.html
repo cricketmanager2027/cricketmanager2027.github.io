@@ -310,52 +310,53 @@ function aiCal(){return []}
 function simAIRound(f,opp,baseFx){let busy=new Set();(G.fx||[]).forEach(x=>{if(x===baseFx)return;if(x.d&&baseFx.d&&Math.abs(x.d-baseFx.d)<=2*864e5){busy.add(x.o);busy.add(G.me)}});let teams=C.filter(k=>k!=G.me&&k!=opp&&!busy.has(k)),used=new Set(),made=[],sid=G.sid++;teams.sort(()=>R()-.5);for(let i=0;i<teams.length;i++){let a=teams[i];if(used.has(a))continue;let candidates=teams.filter(b=>b!=a&&!used.has(b));if(!candidates.length)continue;let b=candidates[~~(R()*candidates.length)];used.add(a);used.add(b);let key=[a,b].sort()+'',ev=TR[key]&&f=='Test'?TR[key]+' '+G.yr:TRo[key]&&f=='ODI'?TRo[key]+' '+G.yr:T[a].n+' v '+T[b].n+' '+(f=='Test'?'Test':f+'I')+' '+G.yr,e={f,a,b,g:1,n:1,sid:sid++,ev,res:null,p:0,d:baseFx.d,ai:1};made.push(e);G.cal.push(e);simCal(e)}return made}
 function simAIPlayerStats(f,a,b){
  let A=G.sq[a]||[],B=G.sq[b]||[];if(A.length<11||B.length<11)return;
- const bats=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][0])||0)-((x.r[f]&&x.r[f][0])||0)),
+ const xi=(q,code)=>pickXI(q,f,code),
  bowls=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][1])||0)-((x.r[f]&&x.r[f][1])||0)).slice(0,6),
  innings=f=='Test'?4:2;
  let best=null;
  for(let inn=0;inn<innings;inn++){
-  let bt=inn%2?A:B,bo=inn%2?B:A,team=inn%2?a:b,opponent=inn%2?b:a,
-   order=bats(bt).slice(0,10),bowlers=bowls(bo);
-  // Test innings vary substantially; limited-overs totals follow their format.
-  let total=f=='Test'?180+~~(R()*151):f=='ODI'?215+~~(R()*116):135+~~(R()*76);
-  let extras=f=='Test'?7+~~(R()*19):f=='ODI'?8+~~(R()*17):5+~~(R()*13);
-  let target=Math.max(90,total-extras),weights=order.map((p,i)=>{
-   let rating=(p.r[f]&&p.r[f][0])||65;
-   return Math.max(.18,Math.pow(rating/80,1.7)*(i<3?1.5:i<6?1:.55)*(.55+R()*.9));
+  let bt=inn%2?xi(A,a):xi(B,b),bo=inn%2?xi(B,b):xi(A,a),team=inn%2?a:b,opponent=inn%2?b:a,
+   order=bt.slice().sort((x,y)=>{
+    let score=p=>((p.r[f]&&p.r[f][0])||65)+(p.t=='B'?5:p.t=='W'?2:p.t=='A'?0:-5)+(R()-.5)*28;
+    return score(y)-score(x)
+   }),bowlers=bowls(bo);
+  let total=f=='Test'?175+~~(R()*171):f=='ODI'?205+~~(R()*136):120+~~(R()*91);
+  let extras=f=='Test'?8+~~(R()*19):f=='ODI'?8+~~(R()*17):5+~~(R()*13);
+  let target=Math.max(85,total-extras),weights=order.map((p,i)=>{
+   let rating=(p.r[f]&&p.r[f][0])||65,role=p.t=='B'?1.12:p.t=='W'?1.04:p.t=='A'?.92:.62;
+   return Math.max(.12,Math.pow(rating/80,1.45)*role*(i<3?1.25:i<6?1:.48)*(.45+R()*1.25));
   }),ws=weights.reduce((x,y)=>x+y,0);
   let scores=weights.map((w,i)=>{
    let rating=(order[i].r[f]&&order[i].r[f][0])||65,share=Math.round(target*w/ws);
-   if(i>=6&&R()<.58)share=~~(R()*17);
-   else if(i>=3&&R()<.3)share=~~(R()*32);
-   else if(i<3&&R()<.14)share=~~(R()*12);
-   let cap=f=='Test'?Math.min(105,Math.round(58+(rating-65)*.55+R()*34)):f=='ODI'?Math.round(55+(rating-65)*1.05+R()*55):Math.round(45+(rating-65)*.95+R()*45);
+   if(i>=7&&R()<.62)share=~~(R()*14);
+   else if(i>=5&&R()<.36)share=~~(R()*27);
+   else if(i<3&&R()<.12)share=~~(R()*10);
+   let cap=f=='Test'?Math.min(95,Math.round(48+(rating-65)*.48+R()*34)):f=='ODI'?Math.round(48+(rating-65)*.9+R()*48):Math.round(38+(rating-65)*.82+R()*40);
    return Math.max(0,Math.min(share,cap));
   });
   let sum=scores.reduce((x,y)=>x+y,0),guard=0;
-  while(sum<target&&guard++<100){
-   let i=~~(R()*Math.min(6,order.length)),cap=f=='Test'?105:f=='ODI'?160:130,add=Math.min(target-sum,Math.max(0,cap-scores[i]));
-   if(!add){if(scores.slice(0,6).every(v=>v>=cap))break;continue}
+  while(sum<target&&guard++<160){
+   let i=~~(R()*Math.min(7,order.length)),cap=f=='Test'?95:f=='ODI'?145:115,add=Math.min(target-sum,Math.max(0,cap-scores[i]));
+   if(!add){if(scores.slice(0,7).every(v=>v>=cap))break;continue}
    scores[i]+=add;sum+=add;
   }
   if(sum>target){let excess=sum-target;for(let i=scores.length-1;i>=0&&excess;i--){let take=Math.min(excess,scores[i]);scores[i]-=take;excess-=take}}
   order.forEach((p,i)=>{
    let runs=scores[i],rating=(p.r[f]&&p.r[f][0])||65,
-    sr=f=='Test'?cl(40+(rating-70)*.16+(R()-.5)*10,30,54):f=='ODI'?cl(78+(rating-70)*.25+(R()-.5)*15,58,100):cl(125+(rating-70)*.35+(R()-.5)*20,90,155),
+    sr=f=='Test'?cl(39+(rating-70)*.13+(R()-.5)*12,28,54):f=='ODI'?cl(76+(rating-70)*.22+(R()-.5)*19,52,101):cl(119+(rating-70)*.3+(R()-.5)*27,82,155),
     balls=runs?Math.max(1,Math.round(runs*100/sr)):1,z=statPlayer(f,p.n,team);
    z.runs+=runs;z.balls+=balls;z.sixes+=Math.min(Math.floor(runs/18),Math.floor(runs*(f=='Test'?.025:f=='ODI'?.055:.105)));z.high=Math.max(z.high,runs);
    if(!best||runs>best.r)best={n:p.n,t:team,r:runs};
   });
-  // Share ten dismissals across the attack; no single bowler is assigned an impossible innings haul.
   let remaining=10,figures=[];
   for(let j=0;j<bowlers.length&&remaining>0;j++){
    let slots=bowlers.length-j,upper=Math.min(4,remaining),minimum=Math.max(0,remaining-(slots-1)*4),w=j==bowlers.length-1?remaining:Math.max(minimum,Math.min(upper,~~(R()*3)+(j<2?1:0)));
    figures.push(w);remaining-=w;
   }
-  let oversTotal=f=='Test'?90+~~(R()*61):f=='ODI'?50:20,used=0;
+  let oversTotal=f=='Test'?85+~~(R()*66):f=='ODI'?50:20,used=0;
   bowlers.forEach((p,j)=>{
    let w=figures[j]||0,overs=j==bowlers.length-1?Math.max(2,oversTotal-used):Math.max(2,Math.round(oversTotal/bowlers.length+((R()-.5)*4)));
-   used+=overs;let econ=f=='Test'?2.4+R()*1.35:f=='ODI'?4.1+R()*1.25:6.6+R()*1.9,
+   used+=overs;let econ=f=='Test'?2.35+R()*1.45:f=='ODI'?4+R()*1.55:6.4+R()*2.1,
     conceded=Math.round(overs*econ),z=statPlayer(f,p.n,opponent);
    z.wkts+=w;z.runsConceded+=conceded;
    if(w>z.bestW||(w==z.bestW&&w>0&&conceded<z.bestR)){z.bestW=w;z.bestR=conceded}
@@ -554,12 +555,12 @@ const rvr=()=>{$('#app').innerHTML=`<main><section class=l style="max-width:760p
 let simming=0;
 function simDay(){if(simming)return;let f=G.fx[G.fi],days=Math.max(1,Math.round((f.d-G.d)/864e5)),ms=Math.max(140,Math.min(420,6500/days)),el=$('#dt');simming=1;if(el&&el.style)el.style.setProperty('--ms',ms+'ms');
  let nf=0;const step=()=>{if(G.d>=f.d){simming=0;if(!nf)fill();return render()}let o=G.d;G.d=Math.min(f.d,o+864e5);$('#dt').innerHTML=`<h1 class=od>${dt(o)}</h1><h1 class=nd>${dt(G.d)}</h1>`;if(R()<.4){fill();nf=1;G.nw=0;let a=$('aside.card');if(a)a.innerHTML=`<div id=nw class=slin>${ncard(G.news[0])}</div>`}setTimeout(step,ms)};step()}
-function ensureStats(){G.lstats=G.lstats||{};G.lstats.International=G.lstats.International||{Test:{},ODI:{},T20:{}};if(G.lstats.Test){Object.assign(G.lstats.International.Test,G.lstats.Test);delete G.lstats.Test}if(G.lstats.ODI){Object.assign(G.lstats.International.ODI,G.lstats.ODI);delete G.lstats.ODI}if(G.lstats.T20){Object.assign(G.lstats.International.T20,G.lstats.T20);delete G.lstats.T20}}
+function ensureStats(){if(G.statSimVersion!==3){G.lstats={International:{Test:{},ODI:{},T20:{}},Domestic:{}};G.statSimVersion=3;return}G.lstats=G.lstats||{};G.lstats.International=G.lstats.International||{Test:{},ODI:{},T20:{}};if(G.lstats.Test){Object.assign(G.lstats.International.Test,G.lstats.Test);delete G.lstats.Test}if(G.lstats.ODI){Object.assign(G.lstats.International.ODI,G.lstats.ODI);delete G.lstats.ODI}if(G.lstats.T20){Object.assign(G.lstats.International.T20,G.lstats.T20);delete G.lstats.T20}}
 function statsBucket(f){ensureStats();if(G.dom){G.lstats.Domestic=G.lstats.Domestic||{};G.lstats.Domestic[G.lg]=G.lstats.Domestic[G.lg]||{T20:{}};return G.lstats.Domestic[G.lg].T20}return G.lstats.International[f]}function statPlayer(f,n,t){let box=statsBucket(f),key=box[n]&&box[n].t&&box[n].t!==t?n+'|'+t:n;let z=box[key]||(box[key]={n:n,t:t,runs:0,balls:0,wkts:0,runsConceded:0,sixes:0,high:0,bestW:0,bestR:999,mom:0,catches:0,stumpings:0});return z}
-function statTag(z){return z&&z.t?flag(z.t,24)+' <b>'+z.n+'</b>':'<b>'+z.n+'</b>'}
+function statTag(z){return '<b>'+z.n+'</b>'}function statTeam(z){return z&&z.t?(T[z.t]&&T[z.t].n||DT[z.t]||z.t):'—'}
 function recordMatchStats(){if(M.statRecorded)return;M.statRecorded=true;ensureStats();let f=M.f,keeper=wkN(f);M.I.forEach(c=>{let bt=bc(M.I.indexOf(c));c.bt.forEach(x=>{if(x.b>0){let z=statPlayer(f,x.p.n,bt);z.runs+=x.r;z.balls+=x.b;z.sixes+=(x.six||0);z.high=Math.max(z.high,x.r)}});Object.entries(c.bw).forEach(([n,v])=>{let z=statPlayer(f,n,bt==G.me?M.o:G.me);z.wkts+=v.w;z.runsConceded+=v.r;if(v.w>z.bestW||(v.w==z.bestW&&v.r<z.bestR)){z.bestW=v.w;z.bestR=v.r}});if(c.keep&&c.keep[keeper]){let k=c.keep[keeper],z=statPlayer(f,keeper,bt);z.catches+=k.c;z.stumpings+=k.s}});if(M.pom)statPlayer(f,M.pom.n,M.pom.t).mom++}
 function leagueRows(f){return Object.values(statsBucket(f)).filter(z=>z.runs||z.wkts||z.mom||z.catches||z.stumpings)}
-function leagueStatsView(){let f=G.dom?'T20':(G.statf||'Test'),a=leagueRows(f),runs=a.slice().sort((x,y)=>y.runs-x.runs),w=a.slice().sort((x,y)=>y.wkts-x.wkts),hi=a.slice().sort((x,y)=>y.high-x.high)[0],bw=a.filter(x=>x.wkts).sort((x,y)=>y.bestW-x.bestW||x.bestR-y.bestR)[0],mom=a.slice().sort((x,y)=>y.mom-x.mom)[0],six=a.slice().sort((x,y)=>y.sixes-x.sixes)[0],sr=a.filter(x=>x.balls).sort((x,y)=>y.runs/y.balls-x.runs/x.balls)[0];let title=G.dom?G.lg+' T20':'International '+f;let back=G.dom?'<button class="btn" onclick="G.sv=\'Group\';render()">← League Table</button><button class="btn" onclick="G.sv=\'Knockout\';render()">Playoffs / Finals</button>':'<button class="btn" onclick="G.sv=\'WTC\';render()">← Back to Standings</button>';let btn=back+(G.dom?'<button class="btn act">T20</button>':['Test','ODI','T20'].map(x=>'<button class="btn '+(f==x?'act':'')+'" onclick="G.statf=\''+x+'\';G.sv=\'Stats\';render()">'+x+'</button>').join(''));return '<section class=l style=max-width:1000px><h2>League Statistics · '+title+'</h2>'+btn+'<div class=grid style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-top:12px"><div class=panel><small>Overall top run scorer</small><h3>'+(runs[0]?runs[0].n:'—')+'</h3><b>'+(runs[0]?runs[0].runs:0)+' runs</b></div><div class=panel><small>Most wickets</small><h3>'+(w[0]?w[0].n:'—')+'</h3><b>'+(w[0]?w[0].wkts:0)+'</b></div><div class=panel><small>Highest total so far</small><h3>'+(hi?hi.n:'—')+'</h3><b>'+(hi?hi.high:0)+'</b></div><div class=panel><small>Best bowling figures</small><h3>'+(bw?bw.n:'—')+'</h3><b>'+(bw&&bw.wkts?bw.bestW+'/'+bw.bestR:'—')+'</b></div><div class=panel><small>Most Man of the Match</small><h3>'+(mom?mom.n:'—')+'</h3><b>'+(mom?mom.mom:0)+'</b></div><div class=panel><small>Most sixes</small><h3>'+(six?six.n:'—')+'</h3><b>'+(six?six.sixes:0)+'</b></div><div class=panel><small>Best strike rate</small><h3>'+(sr?sr.n:'—')+'</h3><b>'+(sr?(sr.runs/sr.balls*100).toFixed(1):'—')+'</b></div></div><div class=panel><h3>Top 5 Run Scorers</h3><table><tr><th>#<th>Player<th>Team<th>Runs<th>High<th>SR</tr>'+runs.slice(0,5).map((z,i)=>'<tr><td>'+(i+1)+'<td>'+statTag(z)+'<td>'+flag(z.t,24)+'<td>'+z.runs+'<td>'+z.high+'<td>'+(z.balls?(z.runs/z.balls*100).toFixed(1):'—')+'</tr>').join('')+'</table></div><div class=panel><h3>Top 5 Wicket Takers</h3><table><tr><th>#<th>Player<th>Team<th>Wickets<th>Best</tr>'+w.slice(0,5).map((z,i)=>'<tr><td>'+(i+1)+'<td>'+statTag(z)+'<td>'+flag(z.t,24)+'<td>'+z.wkts+'<td>'+(z.wkts?z.bestW+'/'+z.bestR:'—')+'</tr>').join('')+'</table></div></section>'}
+function leagueStatsView(){let f=G.dom?'T20':(G.statf||'Test'),a=leagueRows(f),runs=a.slice().sort((x,y)=>y.runs-x.runs),w=a.slice().sort((x,y)=>y.wkts-x.wkts),hi=a.slice().sort((x,y)=>y.high-x.high)[0],bw=a.filter(x=>x.wkts).sort((x,y)=>y.bestW-x.bestW||x.bestR-y.bestR)[0],mom=a.slice().sort((x,y)=>y.mom-x.mom)[0],six=a.slice().sort((x,y)=>y.sixes-x.sixes)[0],sr=a.filter(x=>x.balls).sort((x,y)=>y.runs/y.balls-x.runs/x.balls)[0];let title=G.dom?G.lg+' T20':'International '+f;let back=G.dom?'<button class="btn" onclick="G.sv=\'Group\';render()">← League Table</button><button class="btn" onclick="G.sv=\'Knockout\';render()">Playoffs / Finals</button>':'<button class="btn" onclick="G.sv=\'WTC\';render()">← Back to Standings</button>';let btn=back+(G.dom?'<button class="btn act">T20</button>':['Test','ODI','T20'].map(x=>'<button class="btn '+(f==x?'act':'')+'" onclick="G.statf=\''+x+'\';G.sv=\'Stats\';render()">'+x+'</button>').join(''));return '<section class=l style=max-width:1000px><h2>League Statistics · '+title+'</h2>'+btn+'<div class=grid style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-top:12px"><div class=panel><small>Overall top run scorer</small><h3>'+(runs[0]?runs[0].n:'—')+'</h3><b>'+(runs[0]?runs[0].runs:0)+' runs</b></div><div class=panel><small>Most wickets</small><h3>'+(w[0]?w[0].n:'—')+'</h3><b>'+(w[0]?w[0].wkts:0)+'</b></div><div class=panel><small>Highest total so far</small><h3>'+(hi?hi.n:'—')+'</h3><b>'+(hi?hi.high:0)+'</b></div><div class=panel><small>Best bowling figures</small><h3>'+(bw?bw.n:'—')+'</h3><b>'+(bw&&bw.wkts?bw.bestW+'/'+bw.bestR:'—')+'</b></div><div class=panel><small>Most Man of the Match</small><h3>'+(mom?mom.n:'—')+'</h3><b>'+(mom?mom.mom:0)+'</b></div><div class=panel><small>Most sixes</small><h3>'+(six?six.n:'—')+'</h3><b>'+(six?six.sixes:0)+'</b></div><div class=panel><small>Best strike rate</small><h3>'+(sr?sr.n:'—')+'</h3><b>'+(sr?(sr.runs/sr.balls*100).toFixed(1):'—')+'</b></div></div><div class=panel><h3>Top 5 Run Scorers</h3><table><tr><th>#<th>Player<th>Team<th>Runs<th>High<th>SR</tr>'+runs.slice(0,5).map((z,i)=>'<tr><td>'+(i+1)+'<td>'+statTag(z)+'<td>'+statTeam(z)+'<td>'+z.runs+'<td>'+z.high+'<td>'+(z.balls?(z.runs/z.balls*100).toFixed(1):'—')+'</tr>').join('')+'</table></div><div class=panel><h3>Top 5 Wicket Takers</h3><table><tr><th>#<th>Player<th>Team<th>Wickets<th>Best</tr>'+w.slice(0,5).map((z,i)=>'<tr><td>'+(i+1)+'<td>'+statTag(z)+'<td>'+statTeam(z)+'<td>'+z.wkts+'<td>'+(z.wkts?z.bestW+'/'+z.bestR:'—')+'</tr>').join('')+'</table></div></section>'}
 function squadStatsView(f,pl){let ratings=f=='Ratings',box=ratings?{}:statsBucket(f),r=pl.map(p=>({p,z:box[p.n]||{n:p.n,runs:0,balls:0,wkts:0,bestW:0,bestR:0,mom:0,sixes:0,high:0}})).sort((x,y)=>ratings?(ovr(y.p)-ovr(x.p)):(y.z.runs-x.z.runs||y.z.wkts-x.z.wkts));return '<div class="statswrap"><div class=panel style="min-width:0;box-sizing:border-box;padding:8px"><h3>Squad Statistics · '+(ratings?'Ratings':f+' Performance')+'</h3><table style="table-layout:fixed;width:100%;font-size:12px"><tr><th style="width:25%">Player'+(ratings?'<th>OVR<th>BAT<th>BOWL':'<th>Runs<th>High<th>SR<th>Wkts<th>Best<th>6s<th>MOM')+'</tr>'+r.map(q=>{let z=q.z,p=q.p,rf=f=='Ratings'?'T20':f;return '<tr><td style="overflow-wrap:anywhere">'+p.n+(ratings?'<td><b>'+ovr(p)+'</b><td>'+p.r[rf][0]+'<td>'+p.r[rf][1]:'<td>'+z.runs+'<td>'+z.high+'<td>'+(z.balls?(z.runs/z.balls*100).toFixed(1):'—')+'<td>'+z.wkts+'<td>'+(z.wkts?(z.bestW+'/'+z.bestR):'—')+'<td>'+z.sixes+'<td>'+z.mom)+'</tr>'}).join('')+'</table></div></div>'}
 function pcStart(){let pm=M.pm||{},my=Object.entries(pm).filter(([n,v])=>v.t==G.me),best=[...my].sort((a,b)=>(b[1].r+b[1].w*25)-(a[1].r+a[1].w*25))[0],xi=M.me,fp=xi[~~(R()*xi.length)].n,low=my.filter(([n,v])=>v.b>0).sort((a,b)=>a[1].r-b[1].r)[0],sp=low?low[0]:xi[~~(R()*xi.length)].n,n=best?best[0]:xi[0].n,v=best?best[1]:{r:0,b:0,w:0,rc:0},stat=v.w*25>v.r?`${v.w}/${v.rc}`:`${v.r} off ${v.b}`;
  M.pq=[{q:`${n} was your standout with ${stat}. How would you rate that performance?`,a:[['Absolutely world class from him today.',4,`${n} was world class today`],['Good, but he can still improve.',1,`${n} was good but can still improve`],['It was a team effort, not one man.',2,'it was a team effort, not one man'],['I expect that from him every week.',-1,`he expects that from ${n} every week`]]},
