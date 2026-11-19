@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Cricket Manager 27</title><link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Cricket Manager 27</title><link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--ac:#b6f23c}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
@@ -267,7 +267,42 @@ function newSeason(){if(G.dom)return domSeason();developPlayers();G.cap=Object.a
  {let ai=bl.findIndex(a=>/Ashes/.test(a[0].ev));if(ai>0)bl.unshift(...bl.splice(ai,1));if(tn){let h=Math.ceil(bl.length/2);bl.splice(h+~~(R()*(bl.length-h+1)),0,tn)}}G.fx=bl.flat();let t=G.d+864e5*7;G.fx.forEach((f,i)=>{f.d=t;let nx=G.fx[i+1];t+=864e5*(nx&&nx.sid==f.sid?(f.ko?3:8):12+~~(R()*14))});G.cal=aiCal();G.aiIntlSimmed=true;G.ss=G.d;G.obj=[...(G.obj||[]).filter(o=>o.done&&!o.cl),...genObjs()]}
 function aiCal(){return []}
 function simAIRound(f,opp,baseFx){let busy=new Set();(G.fx||[]).forEach(x=>{if(x===baseFx)return;if(x.d&&baseFx.d&&Math.abs(x.d-baseFx.d)<=2*864e5){busy.add(x.o);busy.add(G.me)}});let teams=C.filter(k=>k!=G.me&&k!=opp&&!busy.has(k)),used=new Set(),made=[],sid=G.sid++;teams.sort(()=>R()-.5);for(let i=0;i<teams.length;i++){let a=teams[i];if(used.has(a))continue;let candidates=teams.filter(b=>b!=a&&!used.has(b));if(!candidates.length)continue;let b=candidates[~~(R()*candidates.length)];used.add(a);used.add(b);let key=[a,b].sort()+'',ev=TR[key]&&f=='Test'?TR[key]+' '+G.yr:TRo[key]&&f=='ODI'?TRo[key]+' '+G.yr:T[a].n+' v '+T[b].n+' '+(f=='Test'?'Test':f+'I')+' '+G.yr,e={f,a,b,g:1,n:1,sid:sid++,ev,res:null,p:0,d:baseFx.d,ai:1};made.push(e);G.cal.push(e);simCal(e)}return made}
-function simAIPlayerStats(f,a,b){let A=G.sq[a]||[],B=G.sq[b]||[];if(A.length<11||B.length<11)return;let bats=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][0])||0)-((x.r[f]&&x.r[f][0])||0)),bowls=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][1])||0)-((x.r[f]&&x.r[f][1])||0)).slice(0,6),innings=f=='Test'?4:2,best=null;for(let inn=0;inn<innings;inn++){let bt=inn%2?A:B,bo=inn%2?B:A,order=bats(bt).slice(0,10),bowlers=bowls(bo),total=f=='Test'?220+~~(R()*180):f=='ODI'?220+~~(R()*110):145+~~(R()*65),left=total,weights=order.map((p,i)=>Math.max(.25,((p.r[f]&&p.r[f][0])||65)/90*(i<4?1.25:1))),ws=weights.reduce((x,y)=>x+y,0);order.forEach((p,i)=>{let share=i==order.length-1?left:Math.min(left,Math.max(5,Math.round(total*weights[i]/ws*(.78+R()*.44))));left-=share;let balls=Math.max(1,Math.round(share/(f=='Test'?1.9+R()*1.1:f=='ODI'?1+R()*.65:.7+R()*.5))),z=statPlayer(f,p.n,bt==a?a:b);z.runs+=share;z.balls+=balls;z.sixes+=Math.floor(share/42)+(R()<.35?1:0);z.high=Math.max(z.high,share);if(!best||share>best.r)best={n:p.n,t:bt==a?a:b,r:share}});let wk=0;for(let j=0;j<bowlers.length&&wk<10;j++){let p=bowlers[j],w=Math.min(10-wk,j<bowlers.length-1?Math.min(3,~~(R()*3)+(j==0?1:0)):Math.max(0,10-wk)),overs=f=='Test'?~~(R()*18)+8:f=='ODI'?~~(R()*6)+5:~~(R()*3)+2,runs=Math.max(6,Math.round(overs*(f=='Test'?3.1+R()*2.2:4.2+R()*2.8))),z=statPlayer(f,p.n,bo==a?a:b);z.wkts+=w;z.runsConceded+=runs;if(w>z.bestW||(w==z.bestW&&runs<z.bestR)){z.bestW=w;z.bestR=runs}wk+=w}}if(best)statPlayer(f,best.n,best.t).mom++}
+function simAIPlayerStats(f,a,b){
+ let A=G.sq[a]||[],B=G.sq[b]||[];if(A.length<11||B.length<11)return;
+ let bats=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][0])||0)-((x.r[f]&&x.r[f][0])||0)),
+ bowls=q=>q.slice().sort((x,y)=>((y.r[f]&&y.r[f][1])||0)-((x.r[f]&&x.r[f][1])||0)).slice(0,6),
+ innings=f=='Test'?4:2,best=null;
+ for(let inn=0;inn<innings;inn++){
+  let bt=inn%2?A:B,bo=inn%2?B:A,team=bt==A?a:b,opponent=bo==A?a:b,
+   order=bats(bt).slice(0,10),bowlers=bowls(bo),
+   total=f=='Test'?205+~~(R()*126):f=='ODI'?205+~~(R()*91):140+~~(R()*56),
+   weights=order.map((p,i)=>Math.max(.25,((p.r[f]&&p.r[f][0])||65)/80*(i<4?1.12:i<7?.95:.62))*(.78+R()*.44)),
+   weightSum=weights.reduce((x,y)=>x+y,0),left=total;
+  order.forEach((p,i)=>{
+   let share=i==order.length-1?left:Math.min(left,Math.max(0,Math.round(total*weights[i]/weightSum)));
+   left-=share;
+   let rating=(p.r[f]&&p.r[f][0])||65,
+    targetSR=f=='Test'?cl(43+(rating-70)*.22+(R()-.5)*12,32,62):f=='ODI'?cl(79+(rating-70)*.3+(R()-.5)*18,60,105):cl(128+(rating-70)*.45+(R()-.5)*28,95,175),
+    balls=share?Math.max(1,Math.round(share*100/targetSR)):Math.max(1,~~(R()*8)+1),
+    z=statPlayer(f,p.n,team);
+   z.runs+=share;z.balls+=balls;
+   z.sixes+=Math.min(Math.floor(share/18),Math.floor(share*(f=='Test'?.025:f=='ODI'?.055:.105)));
+   z.high=Math.max(z.high,share);
+   if(!best||share>best.r)best={n:p.n,t:team,r:share};
+  });
+  let wk=0;
+  for(let j=0;j<bowlers.length&&wk<10;j++){
+   let p=bowlers[j],w=Math.min(10-wk,j<bowlers.length-1?Math.min(3,~~(R()*3)+(j==0?1:0)):Math.max(0,10-wk)),
+    overs=f=='Test'?~~(R()*15)+9:f=='ODI'?~~(R()*6)+5:~~(R()*3)+2,
+    runs=Math.max(6,Math.round(overs*(f=='Test'?2.5+R()*1.5:f=='ODI'?4+R()*1.3:6.5+R()*2))),
+    z=statPlayer(f,p.n,opponent);
+   z.wkts+=w;z.runsConceded+=runs;
+   if(w>z.bestW||(w==z.bestW&&runs<z.bestR)){z.bestW=w;z.bestR=runs}
+   wk+=w;
+  }
+ }
+ if(best)statPlayer(f,best.n,best.t).mom++;
+}
 function simCal(e){if(e.res)return;let f=e.f,n=e.n||(/Ashes|Border/.test(e.ev)?5:f=='Test'?2+(R()<.5?1:0):2+(R()<.4?1:0)),w={a:0,b:0};for(let i=0;i<n;i++){let x=R(),d=(trt(G.sq[e.a],f)-trt(G.sq[e.b],f))/60,dr=f=='Test'?.28:0,r=x<dr?'d':x<dr+(1-dr)*(.5+d)?'a':'b';addRes(f,e.a,e.b,r);simAIPlayerStats(f,e.a,e.b);if(r=='a')w.a++;else if(r=='b')w.b++}e.w=w.a>w.b?e.a:w.b>w.a?e.b:0;e.sc=w.a>w.b?w.a+'-'+w.b:w.b+'-'+w.a;e.res=e.w?T[e.w].n+' win '+e.sc:'Drawn '+w.a+'-'+w.b}
 function tnStart(name,f){let o=C.filter(k=>k!=G.me).sort(()=>R()-.5),A=[G.me,...o.slice(0,4)],B=o.slice(4),pt={};[...A,...B].forEach(k=>pt[k]=0);
  const sm=(a,b)=>{pt[R()<.5+(trt(G.sq[a])-trt(G.sq[b]))/60?a:b]+=2},rr=g=>g.forEach((a,i)=>g.slice(i+1).forEach(b=>{if(a!=G.me&&b!=G.me)sm(a,b)}));rr(A);rr(B);
