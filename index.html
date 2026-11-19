@@ -732,11 +732,12 @@ function applyScreenshotPlayerEdits(){
  if(!G||!G.dom||!G.sq)return;
  const players=[...Object.values(G.sq).flat(),...(G.pool||[])];
  for(const p of players){
-  const e=SCREENSHOT_PLAYER_EDITS[p.n];if(!e)continue;
+  const e=SCREENSHOT_PLAYER_EDITS[p.n];if(!e||p.screenshotEditV===1)continue;
   p.a=e.a;p.t=e.t;
   if(e.bat!=null&&e.bowl!=null){p.r=p.r||{};FM.forEach(f=>p.r[f]=[e.bat,e.bowl]);}
   if(e.potential){p.potential=e.potential;p.maxPotential=e.potential;p.potentialGrowth=e.growth;p.growthFromSeason=G.season+1;p.lastGrowthSeason=G.season;p.pot='late';p.dev=0;}
-  if(e.decline){p.primeDecline=true;p.declineFromSeason=p.declineFromSeason||G.season+1;p.lastDeclineSeason=p.lastDeclineSeason??G.season;}
+  if(e.decline){p.primeDecline=true;p.declineFromSeason=G.season+1;p.lastDeclineSeason=G.season;}
+  p.screenshotEditV=1;
  }
  const hasBrook=[...Object.values(G.sq).flat()].some(p=>p.n==='H Brook'||p.n==='Harry Brook');
  if(!hasBrook&&Array.isArray(G.pool)&&!G.pool.some(p=>p.n==='H Brook'||p.n==='Harry Brook')){
@@ -748,7 +749,7 @@ const tmOf=p=>{if(p.fa)return null;if(p.tm!==undefined&&p.tm&&(!G||!G.dom||p.tm=
 const DN={CSK:'Super Kings',DC:'Capitals',GT:'Titans',KKR:'Knight Riders',LSG:'Super Giants',MI:'Mumbai Indians',PBKS:'Punjab Kings',RR:'Royals',RCB:'Royal Challengers',SRH:'Sunrisers',ADS:'Strikers',BRH:'Heat',HBH:'Hurricanes',MLR:'Renegades',MLS:'Stars',PRS:'Scorchers',SYS:'Sixers',SYT:'Thunder'};
 const tmTag=c=>c?`<span style="white-space:nowrap">${flag(c,28)} <b style="font-size:12px">${DN[c]||c}</b></span>`:'<em>Free agent</em>';
 const scL=()=>G.u.sc||0,ppr=(p,m)=>{let c=Math.max(2,Math.round((ov(p)-62)*.45)),L=scL();return m=='sc'?Math.max(1,Math.round(c*(1-.06*L))):Math.max(2,Math.round(c*1.8*(1-.03*L)))};
-const cand=()=>{let have=new Set([...G.sq[G.me],...(G.pend||[]),...(G.retiredPlayers||[])].map(p=>p.n)),a=[],seen=new Set();C.forEach(t=>{if(t!=G.me)(G.sq[t]||[]).forEach(p=>{if(!have.has(p.n)&&!seen.has(p.n)){seen.add(p.n);let c=JSON.parse(JSON.stringify(p));c.tm=t;delete c.sell;a.push(c)}})});DPOOL[G.dl].split(',').forEach(x=>{let i=x.lastIndexOf(' '),n=x.slice(0,i);if(!have.has(n)&&!seen.has(n)){seen.add(n);let p=mk1(n,x.slice(i+1),G.dl=='IPL'?76:72);p.tm=tmOf(p);a.push(p)}});return a};
+const cand=()=>{let have=new Set([...G.sq[G.me],...(G.pend||[]),...(G.retiredPlayers||[])].map(p=>p.n)),a=[],seen=new Set();C.forEach(t=>{if(t!=G.me)(G.sq[t]||[]).forEach(p=>{if(!have.has(p.n)&&!seen.has(p.n)){seen.add(p.n);let c=JSON.parse(JSON.stringify(p));c.tm=t;delete c.sell;a.push(c)}})});DPOOL[G.dl].split(',').forEach(x=>{let i=x.lastIndexOf(' '),n=x.slice(0,i);if(!have.has(n)&&!seen.has(n)){seen.add(n);let p=mk1(n,x.slice(i+1),G.dl=='IPL'?76:72);if(n=='H Brook'){p.fa=true;p.tm=null}else p.tm=tmOf(p);a.push(p)}});return a};
 const mkPool=()=>cand().filter(p=>ov(p)>=60).sort(()=>R()-.5).slice(0,5+2*scL()).map(p=>{let j=~~(R()*5)-2;Object.values(p.r).forEach(r=>{r[0]+=j;r[1]+=j});return p});
 const ALLT=()=>[...DOM.IPL.teams,...DOM.BBL.teams];
 const allP=()=>{let seen=new Set(),a=[],pend=new Set((G.pend||[]).map(p=>p.n)),add=(p,t,st)=>{if(seen.has(p.n))return;seen.add(p.n);let c=JSON.parse(JSON.stringify(p));c.tm=t;c.st=st;a.push(c)};
