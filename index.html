@@ -471,25 +471,27 @@ function sampS(){if(M.f!='Test')return 0;let d=dd(),w=cl(Math.max(0,-d)/16,0,1.5
  return u<.02+.05*w?40+R()*60:u<.17+.06*w?180+R()*20:u<.2+.06*w?300+R()*R()*215:243+ctr+(R()-R())*50}
 const mS=c=>{if(M.f!='Test')return 1;let q=c.r/Math.max(1,c.S);return q<.6?1.08:q<1?1.02:.94};
 function newInn(){let side=bm()?M.me:M.op;M.I[M.inn]={k:kf(),S:sampS(),r:0,w:0,b:0,s:0,ns:1,next:2,bw:{},lastB:null,lastWicketBall:-99,quickWickets:0,fieldBoost:0,momentum:0,partnership:0,closed:false,dec:false,shots:[],bt:side.map(p=>({p,r:0,b:0,out:0}))};M.log.push(`— Innings ${M.inn+1}: ${bc(M.inn)} batting —`)}
-function testInningsPressure(c,s){
+function testInningsPressure(c,s,bl){
  if(M.f!=='Test'||!c||!s)return 1;
  const pos=c.bt.indexOf(s),rating=cl((s.p.r.Test&&s.p.r.Test[0])||60,30,99);
+ const bowling=cl((bl&&bl.r&&bl.r.Test&&bl.r.Test[1])||70,30,99);
  const role=s.p.t||'B',order=pos<0?5:pos;
- const orderAdj=order<=2?1.12:order<=5?1:order<=7?.88:.72;
- const ratingAdj=cl(1+(rating-70)*.006,.72,1.2);
+ const orderAdj=order<=2?1.04:order<=5?1:order<=7?.94:.86;
+ const ratingAdj=cl(1+(rating-70)*.008,.72,1.2);
+ const matchupAdj=cl(1+(bowling-rating)*.004,.78,1.18);
  const milestone=(runs,threshold)=>Math.max(0,runs-threshold);
  const fifty=milestone(s.r,Math.round(55*orderAdj*ratingAdj));
  const hundred=milestone(s.r,Math.round(100*orderAdj*ratingAdj));
  const hundredFifty=milestone(s.r,Math.round(150*orderAdj*ratingAdj));
  const double=milestone(s.r,Math.round(200*orderAdj*ratingAdj));
- let individual=1+fifty*.0025+hundred*.009+hundredFifty*.025+double*.07;
- if(role==='F'||role==='S')individual*=1.12;
+ let individual=1+fifty*.0008+hundred*.002+hundredFifty*.004+double*.006;
+ if(role==='F'||role==='S')individual*=1.06;
  const total=c.r||0;
- const team=total<350?1:total<400?1.08:total<450?1.2:total<500?1.45:total<550?1.9:total<600?2.7:4.2;
- return cl(individual*team,1,12);
+ const team=total<350?1:total<400?1.02:total<450?1.05:total<500?1.1:total<550?1.16:1.22;
+ return cl(individual*matchupAdj*team,1,3.2);
 }
 function ball(c,bl,fd,mt){let s=c.bt[c.s],bo=c.bw[bl.n]||(c.bw[bl.n]={o:0,r:0,w:0,b:0}),X=M.F,fc=bm()?0:G.u.f,d=bl.r[M.f][1]*Math.max(.8,1-.012*bo.o)+(bm()?0:fanMod())-s.p.r[M.f][0]-(bm()?fanMod():0);s.b++;c.b++;bo.b=(bo.b||0)+1;bo.o=Math.floor(bo.b/6);
- let hidden=(c.momentum?1.035:1)+(c.fieldBoost?0.045:0),pitch=M.pitch||{bias:0,type:'balanced'},pitchW=pitchWicketMod(),testPressure=testInningsPressure(c,s);let pw=cl(X.pw*testPressure*(1+d*.028)*(mt==2?1.5:mt==0?.75:1)*(fd==2?1.15:fd==0?.9:1)*(1+.03*fc)*c.k*mS(c)*hidden*pitchW*(1+pitch.bias)*(bl.t=='S'&&M.f=='Test'?1+.04*M.inn:1),.005,.15);
+ let hidden=(c.momentum?1.035:1)+(c.fieldBoost?0.045:0),pitch=M.pitch||{bias:0,type:'balanced'},pitchW=pitchWicketMod(),testPressure=testInningsPressure(c,s,bl);let pw=cl(X.pw*testPressure*(1+d*.028)*(mt==2?1.5:mt==0?.75:1)*(fd==2?1.15:fd==0?.9:1)*(1+.03*fc)*c.k*mS(c)*hidden*pitchW*(1+pitch.bias)*(bl.t=='S'&&M.f=='Test'?1+.04*M.inn:1),.005,.15);
  if(R()<pw){s.out=1;c.partnership=0;if(c.b-c.lastWicketBall<=12){c.quickWickets=(c.quickWickets||0)+1;if(c.quickWickets>=2)c.fieldBoost=12}else c.quickWickets=1;c.lastWicketBall=c.b;let fs=bm()?M.op:M.me,wk=bm()?(fs.find(z=>z.t=='W')||fs[0]).n:wkN(M.f),r=R(),bnm=s.p.n,tail=['F','S'].includes(s.p.t),late=c.b>(M.F.lim?M.F.lim*6*.78:300),head=/^T Head$/.test(bnm),marsh=/^M Marsh$/.test(bnm),runoutChance=tail&&late?.075:late?.06:.045;
  if(r<runoutChance){let fld=fs.filter(z=>z.n!=wk),fier=fld[~~(R()*Math.max(1,fld.length))]||{n:wk};s.how='run out ('+fier.n+')';}
  else if(head&&r<runoutChance+.23){s.how='b '+bl.n+' (chopped on)';}
