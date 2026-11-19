@@ -341,8 +341,8 @@ function simAIPlayerStats(f,a,b){
   // Share ten dismissals across the attack; no single bowler is assigned an impossible innings haul.
   let remaining=10,figures=[];
   for(let j=0;j<bowlers.length&&remaining>0;j++){
-   let slots=bowlers.length-j,upper=Math.min(4,remaining),w=j==bowlers.length-1?Math.min(4,remaining):Math.min(upper,~~(R()*3)+(j<2?1:0));
-   w=Math.min(w,Math.max(0,remaining-(slots-1)*0));figures.push(w);remaining-=w;
+   let slots=bowlers.length-j,upper=Math.min(4,remaining),minimum=Math.max(0,remaining-(slots-1)*4),w=j==bowlers.length-1?remaining:Math.max(minimum,Math.min(upper,~~(R()*3)+(j<2?1:0)));
+   figures.push(w);remaining-=w;
   }
   let oversTotal=f=='Test'?90+~~(R()*61):f=='ODI'?50:20,used=0;
   bowlers.forEach((p,j)=>{
