@@ -128,6 +128,7 @@ ZIM:{'S Raza':86,'B Muzarabani':84,'R Ngarava':82,'S Williams':81,'C Ervine':80,
 };
 const applyAllCountryRatings=()=>{if(!G||!G.sq)return;const all={...AUS_OVR,...Object.assign({},...Object.values(OTHER_OVR))};for(const team of Object.values(G.sq))for(const p of team||[]){let o=all[p.n];if(!o)continue;let pair=AUS_SPLIT[p.n]?AUS_SPLIT[p.n].slice():OTHER_OVR.IND[p.n]!==undefined?ratingPair(p,o):ratingPair(p,o);FM.forEach(f=>p.r[f]=pair.slice())}if(Array.isArray(G.pool))for(const p of G.pool){let o=all[p.n];if(o){let pair=ratingPair(p,o);FM.forEach(f=>p.r[f]=pair.slice())}}G.ovrModelV=2};
 
+const SCREENSHOT_PLAYER_EDIT_VERSION=3;
 const SCREENSHOT_PLAYER_EDITS={
  'X Bartlett':{a:27,t:'F',bat:70,bowl:84},
  'J Bethell':{a:23,t:'A',bat:86,bowl:78},
@@ -142,21 +143,28 @@ const SCREENSHOT_PLAYER_EDITS={
  'J Fraser-McGurk':{a:24,t:'B',bat:84,bowl:40},
  'C Connolly':{a:23,t:'B',bat:84,bowl:70}
 };
+const SCREENSHOT_PLAYER_ALIASES={'V Suryavanshi':'V Suryavanshi','Vaibhav Sooryavanshi':'V Suryavanshi','Abhishek Sharma':'A Sharma','Cooper Connolly':'C Connolly'};
 function applyScreenshotPlayerEdits(){
  if(!G||!G.sq)return;
  const entries=[];
  for(const [team,squad] of Object.entries(G.sq))for(const p of squad||[])entries.push([team,p]);
  for(const p of G.pool||[])entries.push(['pool',p]);
  for(const p of G.pend||[])entries.push(['pending',p]);
- for(const [team,p] of entries){
+ const apply=(team,p)=>{
+  if(!p)return;
+  if(SCREENSHOT_PLAYER_ALIASES[p.n])p.n=SCREENSHOT_PLAYER_ALIASES[p.n];
   const e=SCREENSHOT_PLAYER_EDITS[p.n];
-  if(!e||p.screenshotEditV>=2||(e.onlyTeam&&team!==e.onlyTeam))continue;
+  if(!e||p.screenshotEditV>=SCREENSHOT_PLAYER_EDIT_VERSION||(e.onlyTeam&&team!==e.onlyTeam))return;
   p.a=e.a;p.t=e.t;
   if(e.bat!=null&&e.bowl!=null){p.r=p.r||{};FM.forEach(f=>p.r[f]=[e.bat,e.bowl]);}
   if(e.maxPotential){p.maxPotential=e.maxPotential;p.potentialGrowth=e.growth;p.growthFromSeason=(G.season||1)+1;p.lastGrowthSeason=G.season||1;p.pot='late';p.dev=0;}
   if(e.decline){p.primeDecline=true;p.declineFromSeason=(G.season||1)+1;p.lastDeclineSeason=G.season||1;}
-  p.screenshotEditV=2;
- }
+  p.screenshotEditV=SCREENSHOT_PLAYER_EDIT_VERSION;
+ };
+ for(const [team,p] of entries)apply(team,p);
+ // Explicitly target the Sunrisers' Abhishek, since A Sharma is also used as an abbreviation elsewhere.
+ const srhAbhishek=(G.sq.SRH||[]).find(p=>p.n==='A Sharma'||p.n==='Abhishek Sharma');
+ if(srhAbhishek)apply('SRH',srhAbhishek);
  if(G.dom&&Array.isArray(G.pool)&&!G.pool.some(p=>p.n==='H Brook'||p.n==='Harry Brook')){
   const p=mk1('H Brook','B',72);p.a=27;p.r={Test:[87,40],ODI:[87,40],T20:[87,40]};p.tm=null;G.pool.push(p);
  }
