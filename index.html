@@ -303,7 +303,7 @@ const VENUES={AUS:['Melbourne Cricket Ground','Sydney Cricket Ground','Adelaide 
 }
 function saveUserFixtureCard(){
  if(!G.dom||!M||!M.I||!M.I.length)return;
- const fx=G.fx[G.fi],id='user-'+G.season+'-'+(fx.sid||G.fi)+'-'+(fx.g||1);
+ const fx=G.fx[G.fi],id='user-'+G.season+'-'+(fx.sid??G.fi)+'-'+(fx.g||1);
  const innings=M.I.map((c,i)=>({team:bc(i),r:c.r||0,w:c.w||0,batting:(c.bt||[]).map(x=>({n:x.p.n,r:x.r||0,b:x.b||0})),bowling:Object.entries(c.bw||{}).map(([n,v])=>({n,o:v.o||0,r:v.r||0,w:v.w||0}))}));
  const card={id,ai:0,d:fx.d,a:G.me,b:M.o,f:M.f,res:M.txt||'',sc:innings.map(x=>x.r+'/'+x.w).join(' · '),innings};
  G.matchCards=G.matchCards||[];const old=G.matchCards.findIndex(x=>x.id===id);if(old>=0)G.matchCards[old]=card;else G.matchCards.push(card);
@@ -311,7 +311,7 @@ function saveUserFixtureCard(){
 function domesticFixturesView(){
  ensureFixtureSchedule();
  const colors=c=>DCOL[c]||['#673ab7','#fff'],name=c=>DC[c]||c,logo=c=>flag(c,34),date=d=>d?new Date(d).toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'}):'Date TBC';
- const cards=G.matchCards||[],userFx=(G.fx||[]).map((f,i)=>{let id='user-'+G.season+'-'+(f.sid||i)+'-'+(f.g||1),card=cards.find(x=>x.id===id);return {id,ai:0,d:f.d,a:G.me,b:f.o,f:f.f,res:card?card.res:'',sc:card?card.sc:'',innings:card?card.innings:[],played:!!card,fixture:f,index:i}});
+ const cards=G.matchCards||[],userFx=(G.fx||[]).map((f,i)=>{let id='user-'+G.season+'-'+(f.sid??i)+'-'+(f.g||1),card=cards.find(x=>x.id===id);return {id,ai:0,d:f.d,a:G.me,b:f.o,f:f.f,res:card?card.res:'',sc:card?card.sc:'',innings:card?card.innings:[],played:!!card||i<G.fi,hasCard:!!card,fixture:f,index:i}});
  const aiFx=(G.aiFixtures||[]).map(f=>({...f,played:!!(f.innings&&f.innings.length)}));
  const all=[...userFx,...aiFx].sort((a,b)=>(a.d||0)-(b.d||0)||String(a.id).localeCompare(String(b.id)));
  if(!all.length)return '<section class="fixturesPage"><h2>Fixtures</h2><p>No fixtures are currently scheduled.</p></section>';
@@ -326,7 +326,7 @@ function domesticFixturesView(){
  };
  const aColor=colors(selected.a)[0],bColor=colors(selected.b)[0];
  const summary=done?selected.innings.map(inningsHtml).join(''):`<div class="fixtureEmpty">${selected.played?'A detailed score summary was not recorded for this earlier match.':'This match has not been played yet. The innings summary will appear here after the match.'}</div>`;
- return `<section class="fixturesPage"><div class="fixturesHeading"><div><h2>Fixtures</h2><p>Every match in the competition, with concise batting and bowling summaries.</p></div><span class="fixtureCount">${all.length} matches</span></div><div class="fixturesLayout"><div class="fixtureList"><h3>All Fixtures</h3>${all.map(f=>{let played=f.played&&f.sc;return `<button class="fixtureRow ${f.id===selected.id?'selected':''}" onclick="G.fixtureSelected='${f.id}';render()"><span class="fixtureDate">${date(f.d)}</span><span class="fixtureSides"><span>${logo(f.a)} ${name(f.a)}</span><b>vs</b><span>${logo(f.b)} ${name(f.b)}</span></span><span class="fixtureScore">${played?f.sc:f.res||'Upcoming'}</span></button>`}).join('')}</div><div class="fixtureDetail"><div class="fixtureMatchBanner" style="--team-a:${aColor};--team-b:${bColor}"><div>${teamLabel(selected.a)}</div><b class="fixtureVs">VS</b><div>${teamLabel(selected.b)}</div></div><div class="fixtureResult"><strong>${selected.sc||'Match summary'}</strong><span>${selected.res|| (selected.played?'Result recorded':'Upcoming fixture')}</span><small>${date(selected.d)} · ${selected.f||'T20'}</small></div>${summary}</div></div></section>`;
+ return `<section class="fixturesPage"><div class="fixturesHeading"><div><h2>Fixtures</h2><p>Every match in the competition, with concise batting and bowling summaries.</p></div><span class="fixtureCount">${all.length} matches</span></div><div class="fixturesLayout"><div class="fixtureList"><h3>All Fixtures</h3>${all.map(f=>{let played=f.played&&f.sc;return `<button class="fixtureRow ${f.id===selected.id?'selected':''}" onclick="G.fixtureSelected='${f.id}';render()"><span class="fixtureDate">${date(f.d)}</span><span class="fixtureSides"><span>${logo(f.a)} ${name(f.a)}</span><b>vs</b><span>${logo(f.b)} ${name(f.b)}</span></span><span class="fixtureScore">${played?f.sc:(f.played?'Played':'Upcoming')}</span></button>`}).join('')}</div><div class="fixtureDetail"><div class="fixtureMatchBanner" style="--team-a:${aColor};--team-b:${bColor}"><div>${teamLabel(selected.a)}</div><b class="fixtureVs">VS</b><div>${teamLabel(selected.b)}</div></div><div class="fixtureResult"><strong>${selected.sc||'Match summary'}</strong><span>${selected.res|| (selected.played?'Result recorded':'Upcoming fixture')}</span><small>${date(selected.d)} · ${selected.f||'T20'}</small></div>${summary}</div></div></section>`;
 }
 const views={
 Central(){let f=G.fx[G.fi],r=G.dom?rk('T20'):(f.f=='Test'?rk('Test'):C.slice().sort((a,b)=>trt(G.sq[b],f.f)-trt(G.sq[a],f.f))),md=G.d>=f.d,d=dt(G.d),dd=G.an?`<h1 class=od>${dt(G.od)}</h1><h1 class=nd>${d}</h1>`:`<h1>${d}</h1>`;G.an=0;
