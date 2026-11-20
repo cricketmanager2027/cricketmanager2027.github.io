@@ -1164,9 +1164,7 @@ function cm27PrepareOpponentXI(code,f,xi){
    if(replace)xi=xi.filter(p=>p.n!==replace.n).concat(keeper);
   }
  }
- if(!keeper){
-  keeper=xi.slice().sort((a,b)=>b.r[f][0]-a.r[f][0])[0];
- }
+ if(!keeper)keeper=xi.slice().sort((a,b)=>b.r[f][0]-a.r[f][0])[0];
  return {xi,wk:keeper?keeper.n:''};
 }
 function cm27InitialMatchLineups(f){
